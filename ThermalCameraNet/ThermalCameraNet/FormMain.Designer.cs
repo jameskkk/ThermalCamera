@@ -47,6 +47,8 @@ namespace ThermalCameraNet
             this.uiLabel3 = new Sunny.UI.UILabel();
             this.uiLabel4 = new Sunny.UI.UILabel();
             this.uiLabel5 = new Sunny.UI.UILabel();
+            this.cbxFaceDetect = new Sunny.UI.UICheckBox();
+            this.cbxHotmap = new Sunny.UI.UICheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picHotmap)).BeginInit();
             this.SuspendLayout();
@@ -127,14 +129,14 @@ namespace ThermalCameraNet
             this.btnRefresh.ForeHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnRefresh.ForePressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnRefresh.ForeSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
-            this.btnRefresh.Location = new System.Drawing.Point(528, 50);
+            this.btnRefresh.Location = new System.Drawing.Point(528, 45);
             this.btnRefresh.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.RectColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnRefresh.RectHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnRefresh.RectPressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnRefresh.RectSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
-            this.btnRefresh.Size = new System.Drawing.Size(128, 29);
+            this.btnRefresh.Size = new System.Drawing.Size(128, 40);
             this.btnRefresh.Style = Sunny.UI.UIStyle.Custom;
             this.btnRefresh.TabIndex = 5;
             this.btnRefresh.Text = "Refresh";
@@ -171,9 +173,9 @@ namespace ThermalCameraNet
             this.lblFPS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblFPS.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.lblFPS.ForeColor = System.Drawing.Color.White;
-            this.lblFPS.Location = new System.Drawing.Point(686, 551);
+            this.lblFPS.Location = new System.Drawing.Point(686, 542);
             this.lblFPS.Name = "lblFPS";
-            this.lblFPS.Size = new System.Drawing.Size(217, 23);
+            this.lblFPS.Size = new System.Drawing.Size(217, 34);
             this.lblFPS.Style = Sunny.UI.UIStyle.Custom;
             this.lblFPS.TabIndex = 7;
             this.lblFPS.Text = "0 fps";
@@ -298,13 +300,45 @@ namespace ThermalCameraNet
             this.uiLabel5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.uiLabel5.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.uiLabel5.ForeColor = System.Drawing.Color.White;
-            this.uiLabel5.Location = new System.Drawing.Point(588, 627);
+            this.uiLabel5.Location = new System.Drawing.Point(590, 627);
             this.uiLabel5.Name = "uiLabel5";
             this.uiLabel5.Size = new System.Drawing.Size(71, 23);
             this.uiLabel5.Style = Sunny.UI.UIStyle.Custom;
             this.uiLabel5.TabIndex = 15;
             this.uiLabel5.Text = "120°C";
             this.uiLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cbxFaceDetect
+            // 
+            this.cbxFaceDetect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbxFaceDetect.Checked = true;
+            this.cbxFaceDetect.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cbxFaceDetect.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.cbxFaceDetect.ForeColor = System.Drawing.Color.White;
+            this.cbxFaceDetect.Location = new System.Drawing.Point(680, 459);
+            this.cbxFaceDetect.MinimumSize = new System.Drawing.Size(1, 1);
+            this.cbxFaceDetect.Name = "cbxFaceDetect";
+            this.cbxFaceDetect.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
+            this.cbxFaceDetect.Size = new System.Drawing.Size(223, 29);
+            this.cbxFaceDetect.Style = Sunny.UI.UIStyle.Custom;
+            this.cbxFaceDetect.TabIndex = 16;
+            this.cbxFaceDetect.Text = "Face Detection";
+            // 
+            // cbxHotmap
+            // 
+            this.cbxHotmap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbxHotmap.Checked = true;
+            this.cbxHotmap.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cbxHotmap.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.cbxHotmap.ForeColor = System.Drawing.Color.White;
+            this.cbxHotmap.Location = new System.Drawing.Point(680, 503);
+            this.cbxHotmap.MinimumSize = new System.Drawing.Size(1, 1);
+            this.cbxHotmap.Name = "cbxHotmap";
+            this.cbxHotmap.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
+            this.cbxHotmap.Size = new System.Drawing.Size(223, 29);
+            this.cbxHotmap.Style = Sunny.UI.UIStyle.Custom;
+            this.cbxHotmap.TabIndex = 17;
+            this.cbxHotmap.Text = "Hot map";
             // 
             // FormMain
             // 
@@ -313,6 +347,8 @@ namespace ThermalCameraNet
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
             this.ClientSize = new System.Drawing.Size(917, 660);
             this.ControlBoxFillHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.Controls.Add(this.cbxHotmap);
+            this.Controls.Add(this.cbxFaceDetect);
             this.Controls.Add(this.uiLabel5);
             this.Controls.Add(this.uiLabel4);
             this.Controls.Add(this.uiLabel3);
@@ -358,6 +394,8 @@ namespace ThermalCameraNet
         private UILabel uiLabel3;
         private UILabel uiLabel4;
         private UILabel uiLabel5;
+        private UICheckBox cbxFaceDetect;
+        private UICheckBox cbxHotmap;
     }
 }
 

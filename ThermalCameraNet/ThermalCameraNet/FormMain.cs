@@ -12,6 +12,10 @@ using Sunny.UI;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using Emgu.CV.CvEnum;
+using System.Reflection;
+using System.IO;
+using System.Runtime.ExceptionServices;
+using System.Security;
 
 namespace ThermalCameraNet
 {
@@ -23,6 +27,10 @@ namespace ThermalCameraNet
         private VideoCapture m_CaptureVideo = null;
         private double m_FrameRate = 0; // Capture frame Rate
         private List<CameraDevice> m_LstCamera = null;
+        private CascadeClassifier m_CascadeClassifier = null;
+        private Pen m_PenScore = new Pen(Color.Red, 3.0f);
+        private Size m_FaceMinSize = new Size(80, 80);
+        private Size m_FaceMaxSize = new Size(300, 300);
 
         public class CameraDevice
         {
@@ -97,6 +105,7 @@ namespace ThermalCameraNet
             }
         }
 
+        [HandleProcessCorruptedStateExceptions, SecurityCritical]
         private void timerProcessFrame_Tick(object sender, EventArgs e)
         {
             ProcessCameraFrame(sender, e);
@@ -129,6 +138,10 @@ namespace ThermalCameraNet
 
         private void InitVideoCapture()
         {
+            Directory.SetCurrentDirectory(AssemblyDirectory);
+            string haarcascade = Path.Combine(AssemblyDirectory, "haarcascade_frontalface_default.xml");
+            m_CascadeClassifier = new CascadeClassifier(haarcascade);
+
             m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, VIDEO_HEIGHT);
             m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, VIDEO_WIDTH);
             m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps, 30);
@@ -150,15 +163,51 @@ namespace ThermalCameraNet
             {
                 Mat gray = new Mat();
                 Mat hotmap = new Mat();
-                CvInvoke.CvtColor(frame, gray, ColorConversion.Bgr2Gray);
-                CvInvoke.ApplyColorMap(gray, hotmap, ColorMapType.Jet);
 
-                //Image<Bgr, byte> image = frame.ToImage<Bgr, byte>();
-                //Image<Gray, byte> image = gray.ToImage<Gray, byte>();
-                ImageUnit.BindBitmapToPicture(picPreview, hotmap.ToBitmap());
+                try
+                {
+                    LogUnit.Log.Info("ProcessCameraFrame(): CvtColor() Start...");
+                    CvInvoke.CvtColor(frame, gray, ColorConversion.Bgr2Gray);
 
-                m_FrameRate = m_CaptureVideo.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps);
-                lblFPS.Text = m_FrameRate.ToString("0.0") + " fps";
+                    LogUnit.Log.Info("ProcessCameraFrame(): BindBitmapToPicture() Start...");
+                    if (cbxHotmap.Checked)
+                    {
+                        LogUnit.Log.Info("ProcessCameraFrame(): ApplyColorMap() Start...");
+                        CvInvoke.ApplyColorMap(gray, hotmap, ColorMapType.Jet);
+                        ImageUnit.BindBitmapToPicture(picPreview, hotmap.ToBitmap());
+                    }   
+                    else
+                    {
+                        //Image<Gray, byte> image = gray.ToImage<Gray, byte>();
+                        //Image<Bgr, byte> image = frame.ToImage<Bgr, byte>();
+                        ImageUnit.BindBitmapToPicture(picPreview, frame.ToBitmap());
+                    }
+
+                    if (cbxFaceDetect.Checked)
+                    {
+                        LogUnit.Log.Info("ProcessCameraFrame(): DetectMultiScale() Start...");
+                        Rectangle[] faceRect = m_CascadeClassifier.DetectMultiScale(gray, 1.1, 3, m_FaceMinSize, m_FaceMaxSize);
+                        Graphics graphics = Graphics.FromImage(picPreview.Image);
+                        foreach (Rectangle rect in faceRect)
+                        {
+                            graphics.DrawRectangle(m_PenScore, rect);
+                        }
+                    }
+
+                    LogUnit.Log.Info("ProcessCameraFrame(): GetCaptureProperty() Start...");
+                    m_FrameRate = m_CaptureVideo.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps);
+                    lblFPS.Text = m_FrameRate.ToString("0.0") + " fps";
+                }
+                catch (Exception ex)
+                {
+                    int line = LogUnit.GetExceptionLineNumber(ex);
+                    LogUnit.Log.Error("ProcessCameraFrame() Exception: line: " + line.ToString() + ", " + ex.Message);
+                }
+                finally
+                {
+                    gray.Dispose();
+                    hotmap.Dispose();
+                }
             }
         }
 
@@ -186,6 +235,17 @@ namespace ThermalCameraNet
             }
 
             return driver;
+        }
+
+        public static string AssemblyDirectory
+        {
+            get
+            {
+                var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                var uri = new UriBuilder(codeBase);
+                var path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
         }
     }
 }
