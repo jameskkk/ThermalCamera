@@ -24,18 +24,25 @@ namespace ThermalCameraNet
     {
         private const int VIDEO_WIDTH = 640;
         private const int VIDEO_HEIGHT = 480;
-        private const string HAAR_XML_PATH = "haarcascade_frontalface_default.xml";
-        //private const string HAAR_XML_PATH = "haarcascade_frontalface_alt_tree.xml";
+        private const string FACE_HAAR_XML_PATH = "haarcascade_frontalface_default.xml";
+        //private const string FACE_HAAR_XML_PATH = "haarcascade_frontalface_alt_tree.xml";
+        //private const string EYE_HAAR_XML_PATH = "haarcascade_frontalface_default.xml";
+        private const string EYE_HAAR_XML_PATH = "haarcascade_eye_tree_eyeglasses.xml";
 
         private VideoCapture m_CaptureVideo = null;
         private Stopwatch m_Stopwatch = null;
         private double m_TotalFrames = 0; // Total frame of video
         private double m_FrameRate = 0; // Capture frame Rate
         private List<CameraDevice> m_LstCamera = null;
-        private CascadeClassifier m_CascadeClassifier = null;
-        private Pen m_PenScore = new Pen(Color.Red, 3.0f);
+        private CascadeClassifier m_FaceCascadeClassifier = null;
+        private CascadeClassifier m_EyeCascadeClassifier = null;
+        private Pen m_PenFace = new Pen(Color.Red, 3.0f);
+        private Pen m_PenEye = new Pen(Color.Green, 3.0f);
+        private Brush m_BrushTemperature = new SolidBrush(Color.Blue);
+        private Font m_FontTemperature = new Font("Arial", 12, FontStyle.Bold, GraphicsUnit.Pixel);
         private Size m_FaceMinSize = new Size(80, 80);
-        private Size m_FaceMaxSize = new Size(300, 300);
+        //private Size m_FaceMaxSize = new Size(300, 300);
+        private Size m_eyeMinSize = new Size(20, 20);
         private bool m_IsVideo = false;
         private bool m_IsPlay = false;
 
@@ -93,9 +100,11 @@ namespace ThermalCameraNet
                 timerProcessFrame.Stop();
                 m_CaptureVideo.Stop();
                 m_CaptureVideo.Dispose();
-                m_CascadeClassifier.Dispose();
+                m_FaceCascadeClassifier.Dispose();
+                m_EyeCascadeClassifier.Dispose();
                 m_CaptureVideo = null;
-                m_CascadeClassifier = null;
+                m_FaceCascadeClassifier = null;
+                m_EyeCascadeClassifier = null;
                 LogUnit.Log.Info("btnCloseCamera_Click(): End...");
             }
         }
@@ -229,8 +238,10 @@ namespace ThermalCameraNet
         private void InitVideoCapture()
         {
             Directory.SetCurrentDirectory(AssemblyDirectory);
-            string haarcascade = Path.Combine(AssemblyDirectory, HAAR_XML_PATH);
-            m_CascadeClassifier = new CascadeClassifier(haarcascade);
+            string facehaarcascade = Path.Combine(AssemblyDirectory, FACE_HAAR_XML_PATH);
+            m_FaceCascadeClassifier = new CascadeClassifier(facehaarcascade);
+            string eyehaarcascade = Path.Combine(AssemblyDirectory, EYE_HAAR_XML_PATH);
+            m_EyeCascadeClassifier = new CascadeClassifier(eyehaarcascade);
 
             m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, VIDEO_HEIGHT);
             m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, VIDEO_WIDTH);
@@ -294,13 +305,13 @@ namespace ThermalCameraNet
                         //Image<Gray, byte> imageGray = gray.ToImage<Gray, byte>();
                         //imageGray._EqualizeHist(); // EqualizeHist
                         CvInvoke.EqualizeHist(gray, gray);
-                        Rectangle[] faceRect = m_CascadeClassifier.DetectMultiScale(gray, // gray Scale Image
+                        Rectangle[] faceRectArray = m_FaceCascadeClassifier.DetectMultiScale(gray, // gray Scale Image
                             1.1, // scaleFactor 1.1~1.5, 越大耗時越低, 檢測精度越低
                             3,   // minNeighbors 3~15, 越高耗時越低
                             m_FaceMinSize,  // 最小臉部大小 
                             Size.Empty/*m_FaceMaxSize*/); // 最大臉部大小, 越大耗時越低
                         Graphics graphics = Graphics.FromImage(picPreview.Image);
-                        foreach (Rectangle rect in faceRect)
+                        foreach (Rectangle rectFace in faceRectArray)
                         {
                             // This will focus in on the face from the haar results its not perfect but it will remove a majoriy of the background noise
                             //Rectangle facesDetectedRect = rect;
@@ -312,8 +323,24 @@ namespace ThermalCameraNet
                             //Image<Bgr, byte> imageBgr = frame.ToImage<Bgr, byte>();
                             //imageBgr.Draw(facesDetectedRect, new Bgr(Color.Red), 3);// Draw Rectangle
 
-                            graphics.DrawRectangle(m_PenScore, rect);
+                            graphics.DrawRectangle(m_PenFace, rectFace);
+                            if (cbxEyeDetect.Checked)
+                            {
+                                Mat face = new Mat(gray, rectFace);
+                                Rectangle[] eyeRectArray = m_EyeCascadeClassifier.DetectMultiScale(face, // gray Scale Image
+                                        1.1, // scaleFactor 1.1~1.5, 越大耗時越低, 檢測精度越低
+                                        3,   // minNeighbors 3~15, 越高耗時越低
+                                        m_eyeMinSize,  // 最小眼睛大小 
+                                        Size.Empty/*m_FaceMaxSize*/); // 最大眼睛大小, 越大耗時越低
+                                foreach (Rectangle rectEye in eyeRectArray)
+                                {
+                                    rectEye.Offset(rectFace.X, rectFace.Y);
+                                    graphics.DrawRectangle(m_PenEye, rectEye);
+                                }
+                                face.Dispose();
+                            }
                         }
+                            
                     }
 
                     if (m_IsVideo)
@@ -391,6 +418,18 @@ namespace ThermalCameraNet
                 var uri = new UriBuilder(codeBase);
                 var path = Uri.UnescapeDataString(uri.Path);
                 return Path.GetDirectoryName(path);
+            }
+        }
+
+        private void DrawTemperature(Graphics graphics, string temperature, float x, float y)
+        {
+            if (cbxShowTemperature.Checked)
+            {
+                string probText = "Temp: " + temperature;
+                var size = graphics.MeasureString(probText, m_FontTemperature);
+                var rectText = new RectangleF(x, y, size.Width, size.Height);
+                graphics.FillRectangle(Brushes.Yellow, rectText);
+                graphics.DrawString(probText, m_FontTemperature, m_BrushTemperature, x, y);
             }
         }
     }

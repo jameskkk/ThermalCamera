@@ -82,6 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DetectFace.cs" />
     <Compile Include="FileUnit.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
@@ -125,6 +126,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Images\hotmap.png" />
+    <Content Include="haarcascade_eye.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="haarcascade_eye_tree_eyeglasses.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="haarcascade_frontalface_alt.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

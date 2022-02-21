@@ -57,6 +57,8 @@ namespace ThermalCameraNet
             this.picHotmap = new System.Windows.Forms.PictureBox();
             this.picPreview = new System.Windows.Forms.PictureBox();
             this.lblFrame = new Sunny.UI.UILabel();
+            this.cbxShowTemperature = new Sunny.UI.UICheckBox();
+            this.cbxEyeDetect = new Sunny.UI.UICheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.Video_seek)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picHotmap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).BeginInit();
@@ -314,7 +316,7 @@ namespace ThermalCameraNet
             this.cbxHotmap.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxHotmap.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxHotmap.ForeColor = System.Drawing.Color.White;
-            this.cbxHotmap.Location = new System.Drawing.Point(680, 479);
+            this.cbxHotmap.Location = new System.Drawing.Point(680, 515);
             this.cbxHotmap.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxHotmap.Name = "cbxHotmap";
             this.cbxHotmap.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -459,6 +461,38 @@ namespace ThermalCameraNet
             this.lblFrame.Text = "Frame: 0";
             this.lblFrame.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // cbxShowTemperature
+            // 
+            this.cbxShowTemperature.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbxShowTemperature.Checked = true;
+            this.cbxShowTemperature.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cbxShowTemperature.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.cbxShowTemperature.ForeColor = System.Drawing.Color.White;
+            this.cbxShowTemperature.Location = new System.Drawing.Point(680, 555);
+            this.cbxShowTemperature.MinimumSize = new System.Drawing.Size(1, 1);
+            this.cbxShowTemperature.Name = "cbxShowTemperature";
+            this.cbxShowTemperature.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
+            this.cbxShowTemperature.Size = new System.Drawing.Size(223, 29);
+            this.cbxShowTemperature.Style = Sunny.UI.UIStyle.Custom;
+            this.cbxShowTemperature.TabIndex = 54;
+            this.cbxShowTemperature.Text = "Temperature";
+            // 
+            // cbxEyeDetect
+            // 
+            this.cbxEyeDetect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbxEyeDetect.Checked = true;
+            this.cbxEyeDetect.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cbxEyeDetect.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.cbxEyeDetect.ForeColor = System.Drawing.Color.White;
+            this.cbxEyeDetect.Location = new System.Drawing.Point(680, 475);
+            this.cbxEyeDetect.MinimumSize = new System.Drawing.Size(1, 1);
+            this.cbxEyeDetect.Name = "cbxEyeDetect";
+            this.cbxEyeDetect.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
+            this.cbxEyeDetect.Size = new System.Drawing.Size(223, 29);
+            this.cbxEyeDetect.Style = Sunny.UI.UIStyle.Custom;
+            this.cbxEyeDetect.TabIndex = 55;
+            this.cbxEyeDetect.Text = "Eye Detection";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 27F);
@@ -466,6 +500,8 @@ namespace ThermalCameraNet
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
             this.ClientSize = new System.Drawing.Size(917, 720);
             this.ControlBoxFillHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.Controls.Add(this.cbxEyeDetect);
+            this.Controls.Add(this.cbxShowTemperature);
             this.Controls.Add(this.lblFrame);
             this.Controls.Add(this.cbxRepeat);
             this.Controls.Add(this.btnPlay);
@@ -532,6 +568,8 @@ namespace ThermalCameraNet
         private System.Windows.Forms.TrackBar Video_seek;
         private UICheckBox cbxRepeat;
         private UILabel lblFrame;
+        private UICheckBox cbxShowTemperature;
+        private UICheckBox cbxEyeDetect;
     }
 }
 
