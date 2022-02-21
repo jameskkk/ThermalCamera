@@ -43,5 +43,32 @@ namespace ThermalCameraNet.Properties {
                 this["Video_Path"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://10.2.7.123:8081/alertMessage/sendToLine/")]
+        public string LineNotifyURL {
+            get {
+                return ((string)(this["LineNotifyURL"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("K13Qeks8J1HpO4oHxhF2PVfaQzvItEHOMs2qq0IblgY")]
+        public string LineToken {
+            get {
+                return ((string)(this["LineToken"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int LineDuration {
+            get {
+                return ((int)(this["LineDuration"]));
+            }
+        }
     }
 }

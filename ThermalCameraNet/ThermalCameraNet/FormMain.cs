@@ -12,7 +12,6 @@ using Sunny.UI;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using Emgu.CV.CvEnum;
-using System.Reflection;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Security;
@@ -31,6 +30,7 @@ namespace ThermalCameraNet
 
         private VideoCapture m_CaptureVideo = null;
         private Stopwatch m_Stopwatch = null;
+        private Stopwatch m_LineStopwatch = null;
         private double m_TotalFrames = 0; // Total frame of video
         private double m_FrameRate = 0; // Capture frame Rate
         private List<CameraDevice> m_LstCamera = null;
@@ -45,6 +45,7 @@ namespace ThermalCameraNet
         private Size m_eyeMinSize = new Size(20, 20);
         private bool m_IsVideo = false;
         private bool m_IsPlay = false;
+        private TTSUnit m_TTSUnit = new TTSUnit();
 
         public class CameraDevice
         {
@@ -63,6 +64,7 @@ namespace ThermalCameraNet
         {
             btnRefresh_Click(sender, e);
             cbxCameraMode.SelectedIndex = 1; // DShow
+            m_TTSUnit.InitSpeech();
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -237,10 +239,10 @@ namespace ThermalCameraNet
 
         private void InitVideoCapture()
         {
-            Directory.SetCurrentDirectory(AssemblyDirectory);
-            string facehaarcascade = Path.Combine(AssemblyDirectory, FACE_HAAR_XML_PATH);
+            Directory.SetCurrentDirectory(FileUnit.AssemblyDirectory);
+            string facehaarcascade = Path.Combine(FileUnit.AssemblyDirectory, FACE_HAAR_XML_PATH);
             m_FaceCascadeClassifier = new CascadeClassifier(facehaarcascade);
-            string eyehaarcascade = Path.Combine(AssemblyDirectory, EYE_HAAR_XML_PATH);
+            string eyehaarcascade = Path.Combine(FileUnit.AssemblyDirectory, EYE_HAAR_XML_PATH);
             m_EyeCascadeClassifier = new CascadeClassifier(eyehaarcascade);
 
             m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, VIDEO_HEIGHT);
@@ -255,6 +257,12 @@ namespace ThermalCameraNet
             Video_seek.Value = 0;
             lblFPS.Text = m_FrameRate.ToString("0.0") + " fps";
             lblTime.Text = "Time: 00:00:00";
+
+            if (m_LineStopwatch != null)
+            {
+                m_LineStopwatch.Stop();
+                m_LineStopwatch = null;
+            }
 
             if (m_IsVideo)
             {
@@ -339,6 +347,36 @@ namespace ThermalCameraNet
                                 }
                                 face.Dispose();
                             }
+
+                            if (cbxShowTemperature.Checked)
+                            {
+                                float tempurature = 37.8f;
+                                DrawTemperature(graphics, tempurature.ToString("0.0") + "°C", rectFace.X + 10, rectFace.Y + 10);
+
+                                float lastSendTime = Properties.Settings.Default.LineDuration + 1;
+                                if (m_LineStopwatch != null)
+                                    lastSendTime = (float)m_LineStopwatch.ElapsedMilliseconds / 1000;
+                                else
+                                {
+                                    m_LineStopwatch = new Stopwatch();
+                                    m_LineStopwatch.Start();
+                                }
+
+                                if (tempurature > 37.5 && lastSendTime > Properties.Settings.Default.LineDuration)
+                                {
+                                    m_LineStopwatch.Restart();
+                                    if (cbxLineNotify.Checked)
+                                    {
+                                        Image alarmImage = picPreview.Image;
+                                        LineUnit.PushLineNotify(alarmImage);
+                                    }
+
+                                    if (cbxTTS.Checked)
+                                    {
+                                        m_TTSUnit.SpeechAsync();
+                                    }
+                                }
+                            }
                         }
                             
                     }
@@ -408,17 +446,6 @@ namespace ThermalCameraNet
             }
 
             return driver;
-        }
-
-        public static string AssemblyDirectory
-        {
-            get
-            {
-                var codeBase = Assembly.GetExecutingAssembly().CodeBase;
-                var uri = new UriBuilder(codeBase);
-                var path = Uri.UnescapeDataString(uri.Path);
-                return Path.GetDirectoryName(path);
-            }
         }
 
         private void DrawTemperature(Graphics graphics, string temperature, float x, float y)
