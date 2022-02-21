@@ -137,6 +137,9 @@
     <Content Include="haarcascade_frontalface_default.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Images\reload.png" />
+    <None Include="Images\pause.png" />
+    <None Include="Images\play.png" />
     <Content Include="ThermalCamera.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

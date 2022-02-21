@@ -33,7 +33,6 @@ namespace ThermalCameraNet
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.btnOpenCamera = new Sunny.UI.UIButton();
-            this.picPreview = new System.Windows.Forms.PictureBox();
             this.timerProcessFrame = new System.Windows.Forms.Timer(this.components);
             this.cbxCameraList = new Sunny.UI.UIComboBox();
             this.btnRefresh = new Sunny.UI.UIButton();
@@ -43,14 +42,24 @@ namespace ThermalCameraNet
             this.uiLabel1 = new Sunny.UI.UILabel();
             this.cbxCameraMode = new Sunny.UI.UIComboBox();
             this.uiLabel2 = new Sunny.UI.UILabel();
-            this.picHotmap = new System.Windows.Forms.PictureBox();
             this.uiLabel3 = new Sunny.UI.UILabel();
             this.uiLabel4 = new Sunny.UI.UILabel();
             this.uiLabel5 = new Sunny.UI.UILabel();
             this.cbxFaceDetect = new Sunny.UI.UICheckBox();
             this.cbxHotmap = new Sunny.UI.UICheckBox();
-            ((System.ComponentModel.ISupportInitialize)(this.picPreview)).BeginInit();
+            this.btnOpenVideo = new Sunny.UI.UIButton();
+            this.openFileDialogVideo = new System.Windows.Forms.OpenFileDialog();
+            this.lblTime = new Sunny.UI.UILabel();
+            this.Video_seek = new System.Windows.Forms.TrackBar();
+            this.cbxRepeat = new Sunny.UI.UICheckBox();
+            this.btnPlay = new System.Windows.Forms.Button();
+            this.btnReload = new System.Windows.Forms.Button();
+            this.picHotmap = new System.Windows.Forms.PictureBox();
+            this.picPreview = new System.Windows.Forms.PictureBox();
+            this.lblFrame = new Sunny.UI.UILabel();
+            ((System.ComponentModel.ISupportInitialize)(this.Video_seek)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picHotmap)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picPreview)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOpenCamera
@@ -73,24 +82,11 @@ namespace ThermalCameraNet
             this.btnOpenCamera.RectHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnOpenCamera.RectPressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnOpenCamera.RectSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
-            this.btnOpenCamera.Size = new System.Drawing.Size(223, 74);
+            this.btnOpenCamera.Size = new System.Drawing.Size(223, 53);
             this.btnOpenCamera.Style = Sunny.UI.UIStyle.Custom;
             this.btnOpenCamera.TabIndex = 3;
             this.btnOpenCamera.Text = "Open Camera";
             this.btnOpenCamera.Click += new System.EventHandler(this.btnOpenCamera_Click);
-            // 
-            // picPreview
-            // 
-            this.picPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.picPreview.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.picPreview.Location = new System.Drawing.Point(16, 96);
-            this.picPreview.Name = "picPreview";
-            this.picPreview.Size = new System.Drawing.Size(640, 480);
-            this.picPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picPreview.TabIndex = 2;
-            this.picPreview.TabStop = false;
             // 
             // timerProcessFrame
             // 
@@ -155,14 +151,14 @@ namespace ThermalCameraNet
             this.btnCloseCamera.ForeHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCloseCamera.ForePressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCloseCamera.ForeSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
-            this.btnCloseCamera.Location = new System.Drawing.Point(680, 154);
+            this.btnCloseCamera.Location = new System.Drawing.Point(680, 120);
             this.btnCloseCamera.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnCloseCamera.Name = "btnCloseCamera";
             this.btnCloseCamera.RectColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCloseCamera.RectHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCloseCamera.RectPressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCloseCamera.RectSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
-            this.btnCloseCamera.Size = new System.Drawing.Size(223, 74);
+            this.btnCloseCamera.Size = new System.Drawing.Size(223, 53);
             this.btnCloseCamera.Style = Sunny.UI.UIStyle.Custom;
             this.btnCloseCamera.TabIndex = 6;
             this.btnCloseCamera.Text = "Close Camera";
@@ -173,9 +169,9 @@ namespace ThermalCameraNet
             this.lblFPS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblFPS.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.lblFPS.ForeColor = System.Drawing.Color.White;
-            this.lblFPS.Location = new System.Drawing.Point(686, 542);
+            this.lblFPS.Location = new System.Drawing.Point(809, 677);
             this.lblFPS.Name = "lblFPS";
-            this.lblFPS.Size = new System.Drawing.Size(217, 34);
+            this.lblFPS.Size = new System.Drawing.Size(94, 34);
             this.lblFPS.Style = Sunny.UI.UIStyle.Custom;
             this.lblFPS.TabIndex = 7;
             this.lblFPS.Text = "0 fps";
@@ -194,14 +190,14 @@ namespace ThermalCameraNet
             this.btnCameraSettings.ForeHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCameraSettings.ForePressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCameraSettings.ForeSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
-            this.btnCameraSettings.Location = new System.Drawing.Point(680, 264);
+            this.btnCameraSettings.Location = new System.Drawing.Point(680, 190);
             this.btnCameraSettings.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnCameraSettings.Name = "btnCameraSettings";
             this.btnCameraSettings.RectColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCameraSettings.RectHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCameraSettings.RectPressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCameraSettings.RectSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
-            this.btnCameraSettings.Size = new System.Drawing.Size(223, 74);
+            this.btnCameraSettings.Size = new System.Drawing.Size(223, 53);
             this.btnCameraSettings.Style = Sunny.UI.UIStyle.Custom;
             this.btnCameraSettings.TabIndex = 8;
             this.btnCameraSettings.Text = "Camera Settings";
@@ -232,7 +228,7 @@ namespace ThermalCameraNet
             "DShow",
             "FFmepg",
             "V4L2"});
-            this.cbxCameraMode.Location = new System.Drawing.Point(680, 408);
+            this.cbxCameraMode.Location = new System.Drawing.Point(680, 384);
             this.cbxCameraMode.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cbxCameraMode.MinimumSize = new System.Drawing.Size(63, 0);
             this.cbxCameraMode.Name = "cbxCameraMode";
@@ -247,7 +243,7 @@ namespace ThermalCameraNet
             this.uiLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.uiLabel2.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.uiLabel2.ForeColor = System.Drawing.Color.White;
-            this.uiLabel2.Location = new System.Drawing.Point(680, 366);
+            this.uiLabel2.Location = new System.Drawing.Point(680, 342);
             this.uiLabel2.Name = "uiLabel2";
             this.uiLabel2.Size = new System.Drawing.Size(174, 23);
             this.uiLabel2.Style = Sunny.UI.UIStyle.Custom;
@@ -255,25 +251,12 @@ namespace ThermalCameraNet
             this.uiLabel2.Text = "Camera Driver:";
             this.uiLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // picHotmap
-            // 
-            this.picHotmap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.picHotmap.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.picHotmap.Image = global::ThermalCameraNet.Properties.Resources.hotmap;
-            this.picHotmap.Location = new System.Drawing.Point(16, 584);
-            this.picHotmap.Name = "picHotmap";
-            this.picHotmap.Size = new System.Drawing.Size(640, 40);
-            this.picHotmap.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picHotmap.TabIndex = 12;
-            this.picHotmap.TabStop = false;
-            // 
             // uiLabel3
             // 
             this.uiLabel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.uiLabel3.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.uiLabel3.ForeColor = System.Drawing.Color.White;
-            this.uiLabel3.Location = new System.Drawing.Point(16, 627);
+            this.uiLabel3.Location = new System.Drawing.Point(16, 687);
             this.uiLabel3.Name = "uiLabel3";
             this.uiLabel3.Size = new System.Drawing.Size(52, 23);
             this.uiLabel3.Style = Sunny.UI.UIStyle.Custom;
@@ -287,7 +270,7 @@ namespace ThermalCameraNet
             | System.Windows.Forms.AnchorStyles.Right)));
             this.uiLabel4.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.uiLabel4.ForeColor = System.Drawing.Color.White;
-            this.uiLabel4.Location = new System.Drawing.Point(291, 627);
+            this.uiLabel4.Location = new System.Drawing.Point(291, 687);
             this.uiLabel4.Name = "uiLabel4";
             this.uiLabel4.Size = new System.Drawing.Size(58, 23);
             this.uiLabel4.Style = Sunny.UI.UIStyle.Custom;
@@ -300,7 +283,7 @@ namespace ThermalCameraNet
             this.uiLabel5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.uiLabel5.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.uiLabel5.ForeColor = System.Drawing.Color.White;
-            this.uiLabel5.Location = new System.Drawing.Point(590, 627);
+            this.uiLabel5.Location = new System.Drawing.Point(590, 687);
             this.uiLabel5.Name = "uiLabel5";
             this.uiLabel5.Size = new System.Drawing.Size(71, 23);
             this.uiLabel5.Style = Sunny.UI.UIStyle.Custom;
@@ -315,7 +298,7 @@ namespace ThermalCameraNet
             this.cbxFaceDetect.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxFaceDetect.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxFaceDetect.ForeColor = System.Drawing.Color.White;
-            this.cbxFaceDetect.Location = new System.Drawing.Point(680, 459);
+            this.cbxFaceDetect.Location = new System.Drawing.Point(680, 435);
             this.cbxFaceDetect.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxFaceDetect.Name = "cbxFaceDetect";
             this.cbxFaceDetect.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -331,7 +314,7 @@ namespace ThermalCameraNet
             this.cbxHotmap.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxHotmap.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxHotmap.ForeColor = System.Drawing.Color.White;
-            this.cbxHotmap.Location = new System.Drawing.Point(680, 503);
+            this.cbxHotmap.Location = new System.Drawing.Point(680, 479);
             this.cbxHotmap.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxHotmap.Name = "cbxHotmap";
             this.cbxHotmap.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -340,13 +323,156 @@ namespace ThermalCameraNet
             this.cbxHotmap.TabIndex = 17;
             this.cbxHotmap.Text = "Hot map";
             // 
+            // btnOpenVideo
+            // 
+            this.btnOpenVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOpenVideo.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnOpenVideo.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(40)))), ((int)(((byte)(70)))));
+            this.btnOpenVideo.FillColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(40)))), ((int)(((byte)(70)))));
+            this.btnOpenVideo.FillHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.btnOpenVideo.FillPressColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            this.btnOpenVideo.FillSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            this.btnOpenVideo.Font = new System.Drawing.Font("Microsoft YaHei", 11F, System.Drawing.FontStyle.Bold);
+            this.btnOpenVideo.ForeHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnOpenVideo.ForePressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnOpenVideo.ForeSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnOpenVideo.Location = new System.Drawing.Point(680, 260);
+            this.btnOpenVideo.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnOpenVideo.Name = "btnOpenVideo";
+            this.btnOpenVideo.RectColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnOpenVideo.RectHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnOpenVideo.RectPressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnOpenVideo.RectSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnOpenVideo.Size = new System.Drawing.Size(223, 53);
+            this.btnOpenVideo.Style = Sunny.UI.UIStyle.Custom;
+            this.btnOpenVideo.TabIndex = 18;
+            this.btnOpenVideo.Text = "Open Video";
+            this.btnOpenVideo.Click += new System.EventHandler(this.btnOpenVideo_Click);
+            // 
+            // openFileDialogVideo
+            // 
+            this.openFileDialogVideo.Filter = "Video files (*.mp4) | *.mp4; | All files (*.*) | *.*";
+            // 
+            // lblTime
+            // 
+            this.lblTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblTime.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.lblTime.ForeColor = System.Drawing.Color.White;
+            this.lblTime.Location = new System.Drawing.Point(384, 602);
+            this.lblTime.Name = "lblTime";
+            this.lblTime.Size = new System.Drawing.Size(204, 32);
+            this.lblTime.Style = Sunny.UI.UIStyle.Custom;
+            this.lblTime.TabIndex = 49;
+            this.lblTime.Text = "Time: 00:00:00";
+            this.lblTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // Video_seek
+            // 
+            this.Video_seek.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Video_seek.AutoSize = false;
+            this.Video_seek.Location = new System.Drawing.Point(16, 582);
+            this.Video_seek.Name = "Video_seek";
+            this.Video_seek.Size = new System.Drawing.Size(579, 24);
+            this.Video_seek.TabIndex = 48;
+            this.Video_seek.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.Video_seek.Scroll += new System.EventHandler(this.Video_seek_Scroll);
+            // 
+            // cbxRepeat
+            // 
+            this.cbxRepeat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbxRepeat.Checked = true;
+            this.cbxRepeat.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cbxRepeat.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.cbxRepeat.ForeColor = System.Drawing.Color.White;
+            this.cbxRepeat.Location = new System.Drawing.Point(21, 605);
+            this.cbxRepeat.MinimumSize = new System.Drawing.Size(1, 1);
+            this.cbxRepeat.Name = "cbxRepeat";
+            this.cbxRepeat.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
+            this.cbxRepeat.Size = new System.Drawing.Size(223, 29);
+            this.cbxRepeat.Style = Sunny.UI.UIStyle.Custom;
+            this.cbxRepeat.TabIndex = 52;
+            this.cbxRepeat.Text = "Repeat";
+            // 
+            // btnPlay
+            // 
+            this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPlay.BackColor = System.Drawing.Color.Transparent;
+            this.btnPlay.BackgroundImage = global::ThermalCameraNet.Properties.Resources.play;
+            this.btnPlay.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnPlay.Location = new System.Drawing.Point(632, 582);
+            this.btnPlay.Name = "btnPlay";
+            this.btnPlay.Size = new System.Drawing.Size(25, 25);
+            this.btnPlay.TabIndex = 51;
+            this.btnPlay.UseVisualStyleBackColor = false;
+            this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
+            // 
+            // btnReload
+            // 
+            this.btnReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnReload.BackColor = System.Drawing.Color.Transparent;
+            this.btnReload.BackgroundImage = global::ThermalCameraNet.Properties.Resources.reload;
+            this.btnReload.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnReload.Location = new System.Drawing.Point(601, 582);
+            this.btnReload.Name = "btnReload";
+            this.btnReload.Size = new System.Drawing.Size(25, 25);
+            this.btnReload.TabIndex = 50;
+            this.btnReload.UseVisualStyleBackColor = false;
+            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
+            // 
+            // picHotmap
+            // 
+            this.picHotmap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.picHotmap.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.picHotmap.Image = global::ThermalCameraNet.Properties.Resources.hotmap;
+            this.picHotmap.Location = new System.Drawing.Point(16, 644);
+            this.picHotmap.Name = "picHotmap";
+            this.picHotmap.Size = new System.Drawing.Size(640, 40);
+            this.picHotmap.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picHotmap.TabIndex = 12;
+            this.picHotmap.TabStop = false;
+            // 
+            // picPreview
+            // 
+            this.picPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.picPreview.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.picPreview.Location = new System.Drawing.Point(16, 96);
+            this.picPreview.Name = "picPreview";
+            this.picPreview.Size = new System.Drawing.Size(640, 480);
+            this.picPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picPreview.TabIndex = 2;
+            this.picPreview.TabStop = false;
+            // 
+            // lblFrame
+            // 
+            this.lblFrame.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblFrame.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.lblFrame.ForeColor = System.Drawing.Color.White;
+            this.lblFrame.Location = new System.Drawing.Point(663, 679);
+            this.lblFrame.Name = "lblFrame";
+            this.lblFrame.Size = new System.Drawing.Size(128, 32);
+            this.lblFrame.Style = Sunny.UI.UIStyle.Custom;
+            this.lblFrame.TabIndex = 53;
+            this.lblFrame.Text = "Frame: 0";
+            this.lblFrame.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 27F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
-            this.ClientSize = new System.Drawing.Size(917, 660);
+            this.ClientSize = new System.Drawing.Size(917, 720);
             this.ControlBoxFillHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.Controls.Add(this.lblFrame);
+            this.Controls.Add(this.cbxRepeat);
+            this.Controls.Add(this.btnPlay);
+            this.Controls.Add(this.btnReload);
+            this.Controls.Add(this.lblTime);
+            this.Controls.Add(this.Video_seek);
+            this.Controls.Add(this.btnOpenVideo);
             this.Controls.Add(this.cbxHotmap);
             this.Controls.Add(this.cbxFaceDetect);
             this.Controls.Add(this.uiLabel5);
@@ -370,9 +496,11 @@ namespace ThermalCameraNet
             this.Text = "Thermal Camera";
             this.TitleColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Load += new System.EventHandler(this.FormMain_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.picPreview)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Video_seek)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picHotmap)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picPreview)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -396,6 +524,14 @@ namespace ThermalCameraNet
         private UILabel uiLabel5;
         private UICheckBox cbxFaceDetect;
         private UICheckBox cbxHotmap;
+        private UIButton btnOpenVideo;
+        private System.Windows.Forms.OpenFileDialog openFileDialogVideo;
+        private System.Windows.Forms.Button btnPlay;
+        private System.Windows.Forms.Button btnReload;
+        private UILabel lblTime;
+        private System.Windows.Forms.TrackBar Video_seek;
+        private UICheckBox cbxRepeat;
+        private UILabel lblFrame;
     }
 }
 

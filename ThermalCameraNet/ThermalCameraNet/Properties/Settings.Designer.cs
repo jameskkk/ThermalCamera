@@ -31,5 +31,17 @@ namespace ThermalCameraNet.Properties {
                 return ((bool)(this["UnhandledException"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string Video_Path {
+            get {
+                return ((string)(this["Video_Path"]));
+            }
+            set {
+                this["Video_Path"] = value;
+            }
+        }
     }
 }

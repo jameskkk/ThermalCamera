@@ -16,6 +16,7 @@ using System.Reflection;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Security;
+using System.Diagnostics;
 
 namespace ThermalCameraNet
 {
@@ -23,14 +24,20 @@ namespace ThermalCameraNet
     {
         private const int VIDEO_WIDTH = 640;
         private const int VIDEO_HEIGHT = 480;
+        private const string HAAR_XML_PATH = "haarcascade_frontalface_default.xml";
+        //private const string HAAR_XML_PATH = "haarcascade_frontalface_alt_tree.xml";
 
         private VideoCapture m_CaptureVideo = null;
+        private Stopwatch m_Stopwatch = null;
+        private double m_TotalFrames = 0; // Total frame of video
         private double m_FrameRate = 0; // Capture frame Rate
         private List<CameraDevice> m_LstCamera = null;
         private CascadeClassifier m_CascadeClassifier = null;
         private Pen m_PenScore = new Pen(Color.Red, 3.0f);
         private Size m_FaceMinSize = new Size(80, 80);
         private Size m_FaceMaxSize = new Size(300, 300);
+        private bool m_IsVideo = false;
+        private bool m_IsPlay = false;
 
         public class CameraDevice
         {
@@ -54,12 +61,20 @@ namespace ThermalCameraNet
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             btnCloseCamera_Click(sender, e);
+            
+        }
+
+        private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            //Application.Exit();
+            System.Environment.Exit(0);
         }
 
         private void btnOpenCamera_Click(object sender, EventArgs e)
         {
             if (cbxCameraList.SelectedIndex != -1)
             {
+                m_IsVideo = false;
                 m_CaptureVideo = new VideoCapture(cbxCameraList.SelectedIndex, GetCameraDriver());
 
                 if (!m_CaptureVideo.IsOpened)
@@ -78,7 +93,10 @@ namespace ThermalCameraNet
                 timerProcessFrame.Stop();
                 m_CaptureVideo.Stop();
                 m_CaptureVideo.Dispose();
+                m_CascadeClassifier.Dispose();
                 m_CaptureVideo = null;
+                m_CascadeClassifier = null;
+                LogUnit.Log.Info("btnCloseCamera_Click(): End...");
             }
         }
 
@@ -105,10 +123,82 @@ namespace ThermalCameraNet
             }
         }
 
+        private void btnOpenVideo_Click(object sender, EventArgs e)
+        {
+            openFileDialogVideo.InitialDirectory = Properties.Settings.Default.Video_Path;
+            if (openFileDialogVideo.ShowDialog(this) == DialogResult.OK)
+            {
+                m_IsVideo = true;
+                Properties.Settings.Default.Video_Path = openFileDialogVideo.FileName;
+                Properties.Settings.Default.Save();
+
+                LogUnit.Log.Info("Open Video File: " + openFileDialogVideo.FileName);
+                m_CaptureVideo = new VideoCapture(openFileDialogVideo.FileName);
+
+                if (!m_CaptureVideo.IsOpened)
+                {
+                    MessageBox.Show("Cannot open camera or video!");
+                    return;
+                }
+                InitVideoCapture();
+            }
+        }
+
+
+        private void btnReload_Click(object sender, EventArgs e)
+        {
+            if (m_IsVideo && m_CaptureVideo != null)
+            {
+                Video_seek.Value = 0;
+                Video_seek_Scroll(sender, e);
+            }
+        }
+
+        private void btnPlay_Click(object sender, EventArgs e)
+        {
+            if (m_IsVideo && m_CaptureVideo != null)
+            {
+                if (m_IsPlay)
+                {
+                    m_IsPlay = false;
+                    btnPlay.BackgroundImage = Properties.Resources.play;
+                    timerProcessFrame.Stop();
+                }
+                else
+                {
+                    m_IsPlay = true;
+                    btnPlay.BackgroundImage = Properties.Resources.pause;
+                    timerProcessFrame.Start();
+                }
+            }
+        }
+
+        private void Video_seek_Scroll(object sender, EventArgs e)
+        {
+            if (m_IsVideo && m_CaptureVideo != null)
+            {
+                if (m_Stopwatch != null)
+                {
+                    m_Stopwatch.Restart();
+                }
+
+                m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.PosFrames, Video_seek.Value);
+                //ProcessCameraFrame(sender, e);
+            }
+        }
+
         [HandleProcessCorruptedStateExceptions, SecurityCritical]
         private void timerProcessFrame_Tick(object sender, EventArgs e)
         {
-            ProcessCameraFrame(sender, e);
+            try
+            {
+                ProcessCameraFrame(sender, e);
+            }
+            catch (Exception ex)
+            {
+                int line = LogUnit.GetExceptionLineNumber(ex);
+                LogUnit.Log.Error("ProcessCameraFrame() Exception: line: " + line.ToString() + ", " + ex.Message);
+            }
         }
 
         private List<CameraDevice> GetAllConnectedCameras()
@@ -139,25 +229,40 @@ namespace ThermalCameraNet
         private void InitVideoCapture()
         {
             Directory.SetCurrentDirectory(AssemblyDirectory);
-            string haarcascade = Path.Combine(AssemblyDirectory, "haarcascade_frontalface_default.xml");
+            string haarcascade = Path.Combine(AssemblyDirectory, HAAR_XML_PATH);
             m_CascadeClassifier = new CascadeClassifier(haarcascade);
 
             m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, VIDEO_HEIGHT);
             m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, VIDEO_WIDTH);
             m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps, 30);
             m_FrameRate = m_CaptureVideo.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps);
+            m_TotalFrames = m_CaptureVideo.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameCount);
             var codec_double = m_CaptureVideo.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.FourCC);
             string codec = new string(Encoding.UTF8.GetString(BitConverter.GetBytes(Convert.ToUInt32(codec_double))).ToCharArray());
             LogUnit.Log.Info("InitVideoCapture() Codec: " + codec + ", FrameRate: " + m_FrameRate.ToString());
 
+            Video_seek.Value = 0;
             lblFPS.Text = m_FrameRate.ToString("0.0") + " fps";
+            lblTime.Text = "Time: 00:00:00";
+
+            if (m_IsVideo)
+            {
+                m_IsPlay = true;
+                m_Stopwatch = new Stopwatch();
+                m_Stopwatch.Start();
+                Video_seek.Minimum = 0;
+                Video_seek.Maximum = (int)m_TotalFrames - 1;
+                btnPlay.BackgroundImage = Properties.Resources.pause;
+            }
 
             timerProcessFrame.Start();
             //Application.Idle += ProcessCameraFrame;
         }
 
+        [HandleProcessCorruptedStateExceptions, SecurityCritical]
         private void ProcessCameraFrame(object sender, EventArgs e)
         {
+            double framesNo = m_CaptureVideo.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.PosFrames);
             Mat frame = m_CaptureVideo.QueryFrame();
             if (frame != null)
             {
@@ -186,17 +291,42 @@ namespace ThermalCameraNet
                     if (cbxFaceDetect.Checked)
                     {
                         LogUnit.Log.Info("ProcessCameraFrame(): DetectMultiScale() Start...");
-                        Rectangle[] faceRect = m_CascadeClassifier.DetectMultiScale(gray, 1.1, 3, m_FaceMinSize, m_FaceMaxSize);
+                        //Image<Gray, byte> imageGray = gray.ToImage<Gray, byte>();
+                        //imageGray._EqualizeHist(); // EqualizeHist
+                        CvInvoke.EqualizeHist(gray, gray);
+                        Rectangle[] faceRect = m_CascadeClassifier.DetectMultiScale(gray, // gray Scale Image
+                            1.1, // scaleFactor 1.1~1.5, 越大耗時越低, 檢測精度越低
+                            3,   // minNeighbors 3~15, 越高耗時越低
+                            m_FaceMinSize,  // 最小臉部大小 
+                            Size.Empty/*m_FaceMaxSize*/); // 最大臉部大小, 越大耗時越低
                         Graphics graphics = Graphics.FromImage(picPreview.Image);
                         foreach (Rectangle rect in faceRect)
                         {
+                            // This will focus in on the face from the haar results its not perfect but it will remove a majoriy of the background noise
+                            //Rectangle facesDetectedRect = rect;
+                            //facesDetectedRect.X += (int)(facesDetectedRect.Height * 0.6);
+                            //facesDetectedRect.Y += (int)(facesDetectedRect.Width * 0.8);
+                            //facesDetectedRect.Height += (int)(facesDetectedRect.Height * 0.1);
+                            //facesDetectedRect.Width += (int)(facesDetectedRect.Width * 0.2);
+
+                            //Image<Bgr, byte> imageBgr = frame.ToImage<Bgr, byte>();
+                            //imageBgr.Draw(facesDetectedRect, new Bgr(Color.Red), 3);// Draw Rectangle
+
                             graphics.DrawRectangle(m_PenScore, rect);
                         }
                     }
 
                     LogUnit.Log.Info("ProcessCameraFrame(): GetCaptureProperty() Start...");
-                    m_FrameRate = m_CaptureVideo.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps);
-                    lblFPS.Text = m_FrameRate.ToString("0.0") + " fps";
+
+                    if (m_IsVideo)
+                    {
+                        double fps = framesNo / ((float)m_Stopwatch.ElapsedMilliseconds / 1000);
+                        lblFPS.Text = fps.ToString("0.0") + " fps";
+                        lblFrame.Text = "Frame: " + framesNo.ToString();
+                        double time_index = m_CaptureVideo.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.PosMsec);
+                        lblTime.Text = "Time: " + TimeSpan.FromMilliseconds(time_index).ToString().Substring(0, 8);
+                        Video_seek.Value = (int)(framesNo);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -205,8 +335,25 @@ namespace ThermalCameraNet
                 }
                 finally
                 {
+                    frame.Dispose();
                     gray.Dispose();
                     hotmap.Dispose();
+                }
+            }
+
+            if (m_IsVideo && m_TotalFrames - 1 == framesNo)
+            {
+                if (cbxRepeat.Checked)
+                {
+                    btnReload_Click(sender, e);
+                }
+                else
+                {
+                    m_IsPlay = false;
+                    btnPlay.BackgroundImage = Properties.Resources.play;
+                    timerProcessFrame.Stop();
+                    Video_seek.Value = 0;
+                    Video_seek_Scroll(sender, e);
                 }
             }
         }
