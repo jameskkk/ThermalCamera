@@ -271,13 +271,13 @@ namespace ThermalCameraNet
 
                 try
                 {
-                    LogUnit.Log.Info("ProcessCameraFrame(): CvtColor() Start...");
+                    //LogUnit.Log.Info("ProcessCameraFrame(): CvtColor() Start...");
                     CvInvoke.CvtColor(frame, gray, ColorConversion.Bgr2Gray);
 
-                    LogUnit.Log.Info("ProcessCameraFrame(): BindBitmapToPicture() Start...");
+                    //LogUnit.Log.Info("ProcessCameraFrame(): BindBitmapToPicture() Start...");
                     if (cbxHotmap.Checked)
                     {
-                        LogUnit.Log.Info("ProcessCameraFrame(): ApplyColorMap() Start...");
+                        //LogUnit.Log.Info("ProcessCameraFrame(): ApplyColorMap() Start...");
                         CvInvoke.ApplyColorMap(gray, hotmap, ColorMapType.Jet);
                         ImageUnit.BindBitmapToPicture(picPreview, hotmap.ToBitmap());
                     }   
@@ -290,7 +290,7 @@ namespace ThermalCameraNet
 
                     if (cbxFaceDetect.Checked)
                     {
-                        LogUnit.Log.Info("ProcessCameraFrame(): DetectMultiScale() Start...");
+                        //LogUnit.Log.Info("ProcessCameraFrame(): DetectMultiScale() Start...");
                         //Image<Gray, byte> imageGray = gray.ToImage<Gray, byte>();
                         //imageGray._EqualizeHist(); // EqualizeHist
                         CvInvoke.EqualizeHist(gray, gray);
@@ -316,10 +316,9 @@ namespace ThermalCameraNet
                         }
                     }
 
-                    LogUnit.Log.Info("ProcessCameraFrame(): GetCaptureProperty() Start...");
-
                     if (m_IsVideo)
                     {
+                        //LogUnit.Log.Info("ProcessCameraFrame(): FPS compute Start...");
                         double fps = framesNo / ((float)m_Stopwatch.ElapsedMilliseconds / 1000);
                         lblFPS.Text = fps.ToString("0.0") + " fps";
                         lblFrame.Text = "Frame: " + framesNo.ToString();
