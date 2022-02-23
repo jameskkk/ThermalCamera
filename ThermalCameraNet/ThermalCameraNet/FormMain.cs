@@ -172,13 +172,13 @@ namespace ThermalCameraNet
                 if (m_IsPlay)
                 {
                     m_IsPlay = false;
-                    btnPlay.BackgroundImage = Properties.Resources.play;
+                    btnPlay.Image = Properties.Resources.play;
                     timerProcessFrame.Stop();
                 }
                 else
                 {
                     m_IsPlay = true;
-                    btnPlay.BackgroundImage = Properties.Resources.pause;
+                    btnPlay.Image = Properties.Resources.pause;
                     timerProcessFrame.Start();
                 }
             }
@@ -271,7 +271,7 @@ namespace ThermalCameraNet
                 m_Stopwatch.Start();
                 Video_seek.Minimum = 0;
                 Video_seek.Maximum = (int)m_TotalFrames - 1;
-                btnPlay.BackgroundImage = Properties.Resources.pause;
+                btnPlay.Image = Properties.Resources.pause;
             }
 
             timerProcessFrame.Start();
@@ -364,6 +364,7 @@ namespace ThermalCameraNet
 
                                 if (tempurature > 37.5 && lastSendTime > Properties.Settings.Default.LineDuration)
                                 {
+                                    LogUnit.Log.Info("ProcessCameraFrame(): alarm over temperature...");
                                     m_LineStopwatch.Restart();
                                     if (cbxLineNotify.Checked)
                                     {
@@ -414,7 +415,7 @@ namespace ThermalCameraNet
                 else
                 {
                     m_IsPlay = false;
-                    btnPlay.BackgroundImage = Properties.Resources.play;
+                    btnPlay.Image = Properties.Resources.play;
                     timerProcessFrame.Stop();
                     Video_seek.Value = 0;
                     Video_seek_Scroll(sender, e);

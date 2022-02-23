@@ -50,10 +50,7 @@ namespace ThermalCameraNet
             this.btnOpenVideo = new Sunny.UI.UIButton();
             this.openFileDialogVideo = new System.Windows.Forms.OpenFileDialog();
             this.lblTime = new Sunny.UI.UILabel();
-            this.Video_seek = new System.Windows.Forms.TrackBar();
             this.cbxRepeat = new Sunny.UI.UICheckBox();
-            this.btnPlay = new System.Windows.Forms.Button();
-            this.btnReload = new System.Windows.Forms.Button();
             this.picHotmap = new System.Windows.Forms.PictureBox();
             this.picPreview = new System.Windows.Forms.PictureBox();
             this.lblFrame = new Sunny.UI.UILabel();
@@ -61,7 +58,9 @@ namespace ThermalCameraNet
             this.cbxEyeDetect = new Sunny.UI.UICheckBox();
             this.cbxLineNotify = new Sunny.UI.UICheckBox();
             this.cbxTTS = new Sunny.UI.UICheckBox();
-            ((System.ComponentModel.ISupportInitialize)(this.Video_seek)).BeginInit();
+            this.Video_seek = new Sunny.UI.UITrackBar();
+            this.btnReload = new Sunny.UI.UISymbolButton();
+            this.btnPlay = new Sunny.UI.UISymbolButton();
             ((System.ComponentModel.ISupportInitialize)(this.picHotmap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).BeginInit();
             this.SuspendLayout();
@@ -370,18 +369,6 @@ namespace ThermalCameraNet
             this.lblTime.Text = "Time: 00:00:00";
             this.lblTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // Video_seek
-            // 
-            this.Video_seek.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Video_seek.AutoSize = false;
-            this.Video_seek.Location = new System.Drawing.Point(16, 582);
-            this.Video_seek.Name = "Video_seek";
-            this.Video_seek.Size = new System.Drawing.Size(579, 24);
-            this.Video_seek.TabIndex = 48;
-            this.Video_seek.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.Video_seek.Scroll += new System.EventHandler(this.Video_seek_Scroll);
-            // 
             // cbxRepeat
             // 
             this.cbxRepeat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -397,32 +384,6 @@ namespace ThermalCameraNet
             this.cbxRepeat.Style = Sunny.UI.UIStyle.Custom;
             this.cbxRepeat.TabIndex = 52;
             this.cbxRepeat.Text = "Repeat";
-            // 
-            // btnPlay
-            // 
-            this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlay.BackColor = System.Drawing.Color.Transparent;
-            this.btnPlay.BackgroundImage = global::ThermalCameraNet.Properties.Resources.play;
-            this.btnPlay.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnPlay.Location = new System.Drawing.Point(632, 582);
-            this.btnPlay.Name = "btnPlay";
-            this.btnPlay.Size = new System.Drawing.Size(25, 25);
-            this.btnPlay.TabIndex = 51;
-            this.btnPlay.UseVisualStyleBackColor = false;
-            this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
-            // 
-            // btnReload
-            // 
-            this.btnReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReload.BackColor = System.Drawing.Color.Transparent;
-            this.btnReload.BackgroundImage = global::ThermalCameraNet.Properties.Resources.reload;
-            this.btnReload.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnReload.Location = new System.Drawing.Point(601, 582);
-            this.btnReload.Name = "btnReload";
-            this.btnReload.Size = new System.Drawing.Size(25, 25);
-            this.btnReload.TabIndex = 50;
-            this.btnReload.UseVisualStyleBackColor = false;
-            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
             // 
             // picHotmap
             // 
@@ -525,6 +486,49 @@ namespace ThermalCameraNet
             this.cbxTTS.TabIndex = 57;
             this.cbxTTS.Text = "TTS";
             // 
+            // Video_seek
+            // 
+            this.Video_seek.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Video_seek.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
+            this.Video_seek.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.Video_seek.Location = new System.Drawing.Point(17, 579);
+            this.Video_seek.MinimumSize = new System.Drawing.Size(1, 1);
+            this.Video_seek.Name = "Video_seek";
+            this.Video_seek.Size = new System.Drawing.Size(579, 29);
+            this.Video_seek.Style = Sunny.UI.UIStyle.Custom;
+            this.Video_seek.TabIndex = 58;
+            this.Video_seek.Text = "uiTrackBar1";
+            this.Video_seek.ValueChanged += new System.EventHandler(this.Video_seek_Scroll);
+            // 
+            // btnReload
+            // 
+            this.btnReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnReload.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnReload.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.btnReload.Image = global::ThermalCameraNet.Properties.Resources.reload;
+            this.btnReload.Location = new System.Drawing.Point(600, 582);
+            this.btnReload.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnReload.Name = "btnReload";
+            this.btnReload.Size = new System.Drawing.Size(25, 25);
+            this.btnReload.Style = Sunny.UI.UIStyle.Custom;
+            this.btnReload.TabIndex = 59;
+            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
+            // 
+            // btnPlay
+            // 
+            this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPlay.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnPlay.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.btnPlay.Image = global::ThermalCameraNet.Properties.Resources.play;
+            this.btnPlay.Location = new System.Drawing.Point(631, 582);
+            this.btnPlay.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnPlay.Name = "btnPlay";
+            this.btnPlay.Size = new System.Drawing.Size(25, 25);
+            this.btnPlay.Style = Sunny.UI.UIStyle.Custom;
+            this.btnPlay.TabIndex = 60;
+            this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 27F);
@@ -532,16 +536,16 @@ namespace ThermalCameraNet
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
             this.ClientSize = new System.Drawing.Size(917, 720);
             this.ControlBoxFillHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.Controls.Add(this.btnPlay);
+            this.Controls.Add(this.btnReload);
+            this.Controls.Add(this.Video_seek);
             this.Controls.Add(this.cbxTTS);
             this.Controls.Add(this.cbxLineNotify);
             this.Controls.Add(this.cbxEyeDetect);
             this.Controls.Add(this.cbxShowTemperature);
             this.Controls.Add(this.lblFrame);
             this.Controls.Add(this.cbxRepeat);
-            this.Controls.Add(this.btnPlay);
-            this.Controls.Add(this.btnReload);
             this.Controls.Add(this.lblTime);
-            this.Controls.Add(this.Video_seek);
             this.Controls.Add(this.btnOpenVideo);
             this.Controls.Add(this.cbxHotmap);
             this.Controls.Add(this.cbxFaceDetect);
@@ -568,7 +572,6 @@ namespace ThermalCameraNet
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Load += new System.EventHandler(this.FormMain_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.Video_seek)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picHotmap)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).EndInit();
             this.ResumeLayout(false);
@@ -596,16 +599,16 @@ namespace ThermalCameraNet
         private UICheckBox cbxHotmap;
         private UIButton btnOpenVideo;
         private System.Windows.Forms.OpenFileDialog openFileDialogVideo;
-        private System.Windows.Forms.Button btnPlay;
-        private System.Windows.Forms.Button btnReload;
         private UILabel lblTime;
-        private System.Windows.Forms.TrackBar Video_seek;
         private UICheckBox cbxRepeat;
         private UILabel lblFrame;
         private UICheckBox cbxShowTemperature;
         private UICheckBox cbxEyeDetect;
         private UICheckBox cbxLineNotify;
         private UICheckBox cbxTTS;
+        private UITrackBar Video_seek;
+        private UISymbolButton btnReload;
+        private UISymbolButton btnPlay;
     }
 }
 
