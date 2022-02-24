@@ -160,6 +160,7 @@ namespace ThermalCameraNet
         {
             if (m_IsVideo && m_CaptureVideo != null)
             {
+                m_Stopwatch.Restart();
                 Video_seek.Value = 0;
                 Video_seek_Scroll(sender, e);
             }
@@ -173,12 +174,14 @@ namespace ThermalCameraNet
                 {
                     m_IsPlay = false;
                     btnPlay.Image = Properties.Resources.play;
+                    m_Stopwatch.Stop();
                     timerProcessFrame.Stop();
                 }
                 else
                 {
                     m_IsPlay = true;
                     btnPlay.Image = Properties.Resources.pause;
+                    m_Stopwatch.Start();
                     timerProcessFrame.Start();
                 }
             }
@@ -188,11 +191,12 @@ namespace ThermalCameraNet
         {
             if (m_IsVideo && m_CaptureVideo != null)
             {
-                if (m_Stopwatch != null)
-                {
-                    m_Stopwatch.Restart();
-                }
+                //if (m_Stopwatch != null)
+                //{
+                //    m_Stopwatch.Restart();
+                //}
 
+                //LogUnit.Log.Info("Video_seek_Scroll() Video_seek.Value = " + Video_seek.Value);
                 m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.PosFrames, Video_seek.Value);
                 //ProcessCameraFrame(sender, e);
             }
@@ -267,8 +271,16 @@ namespace ThermalCameraNet
             if (m_IsVideo)
             {
                 m_IsPlay = true;
-                m_Stopwatch = new Stopwatch();
-                m_Stopwatch.Start();
+
+                if (m_Stopwatch != null)
+                {
+                    m_Stopwatch.Restart();
+                }
+                else
+                {
+                    m_Stopwatch = new Stopwatch();
+                    m_Stopwatch.Start();
+                }
                 Video_seek.Minimum = 0;
                 Video_seek.Maximum = (int)m_TotalFrames - 1;
                 btnPlay.Image = Properties.Resources.pause;
@@ -390,7 +402,7 @@ namespace ThermalCameraNet
                         lblFrame.Text = "Frame: " + framesNo.ToString();
                         double time_index = m_CaptureVideo.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.PosMsec);
                         lblTime.Text = "Time: " + TimeSpan.FromMilliseconds(time_index).ToString().Substring(0, 8);
-                        Video_seek.Value = (int)(framesNo);
+                        Video_seek.Value = (int)(framesNo + 1);
                     }
                 }
                 catch (Exception ex)
