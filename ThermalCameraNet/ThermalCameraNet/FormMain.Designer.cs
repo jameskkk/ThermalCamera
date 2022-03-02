@@ -61,6 +61,7 @@ namespace ThermalCameraNet
             this.Video_seek = new Sunny.UI.UITrackBar();
             this.btnReload = new Sunny.UI.UISymbolButton();
             this.btnPlay = new Sunny.UI.UISymbolButton();
+            this.cbxSaveImage = new Sunny.UI.UICheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picHotmap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).BeginInit();
             this.SuspendLayout();
@@ -114,6 +115,7 @@ namespace ThermalCameraNet
             this.cbxCameraList.Style = Sunny.UI.UIStyle.Custom;
             this.cbxCameraList.TabIndex = 4;
             this.cbxCameraList.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.cbxCameraList.SelectedIndexChanged += new System.EventHandler(this.cbxCameraList_SelectedIndexChanged);
             // 
             // btnRefresh
             // 
@@ -278,7 +280,7 @@ namespace ThermalCameraNet
             this.uiLabel4.Size = new System.Drawing.Size(58, 23);
             this.uiLabel4.Style = Sunny.UI.UIStyle.Custom;
             this.uiLabel4.TabIndex = 14;
-            this.uiLabel4.Text = "60°C";
+            this.uiLabel4.Text = "20°C";
             this.uiLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiLabel5
@@ -291,7 +293,7 @@ namespace ThermalCameraNet
             this.uiLabel5.Size = new System.Drawing.Size(71, 23);
             this.uiLabel5.Style = Sunny.UI.UIStyle.Custom;
             this.uiLabel5.TabIndex = 15;
-            this.uiLabel5.Text = "120°C";
+            this.uiLabel5.Text = "35°C";
             this.uiLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // cbxFaceDetect
@@ -301,7 +303,7 @@ namespace ThermalCameraNet
             this.cbxFaceDetect.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxFaceDetect.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxFaceDetect.ForeColor = System.Drawing.Color.White;
-            this.cbxFaceDetect.Location = new System.Drawing.Point(680, 435);
+            this.cbxFaceDetect.Location = new System.Drawing.Point(680, 427);
             this.cbxFaceDetect.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxFaceDetect.Name = "cbxFaceDetect";
             this.cbxFaceDetect.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -317,7 +319,7 @@ namespace ThermalCameraNet
             this.cbxHotmap.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxHotmap.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxHotmap.ForeColor = System.Drawing.Color.White;
-            this.cbxHotmap.Location = new System.Drawing.Point(680, 509);
+            this.cbxHotmap.Location = new System.Drawing.Point(680, 499);
             this.cbxHotmap.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxHotmap.Name = "cbxHotmap";
             this.cbxHotmap.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -431,7 +433,7 @@ namespace ThermalCameraNet
             this.cbxShowTemperature.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxShowTemperature.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxShowTemperature.ForeColor = System.Drawing.Color.White;
-            this.cbxShowTemperature.Location = new System.Drawing.Point(680, 546);
+            this.cbxShowTemperature.Location = new System.Drawing.Point(680, 535);
             this.cbxShowTemperature.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxShowTemperature.Name = "cbxShowTemperature";
             this.cbxShowTemperature.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -447,7 +449,7 @@ namespace ThermalCameraNet
             this.cbxEyeDetect.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxEyeDetect.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxEyeDetect.ForeColor = System.Drawing.Color.White;
-            this.cbxEyeDetect.Location = new System.Drawing.Point(680, 472);
+            this.cbxEyeDetect.Location = new System.Drawing.Point(680, 463);
             this.cbxEyeDetect.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxEyeDetect.Name = "cbxEyeDetect";
             this.cbxEyeDetect.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -462,7 +464,7 @@ namespace ThermalCameraNet
             this.cbxLineNotify.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxLineNotify.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxLineNotify.ForeColor = System.Drawing.Color.White;
-            this.cbxLineNotify.Location = new System.Drawing.Point(680, 583);
+            this.cbxLineNotify.Location = new System.Drawing.Point(680, 571);
             this.cbxLineNotify.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxLineNotify.Name = "cbxLineNotify";
             this.cbxLineNotify.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -477,7 +479,7 @@ namespace ThermalCameraNet
             this.cbxTTS.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxTTS.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxTTS.ForeColor = System.Drawing.Color.White;
-            this.cbxTTS.Location = new System.Drawing.Point(680, 620);
+            this.cbxTTS.Location = new System.Drawing.Point(680, 607);
             this.cbxTTS.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxTTS.Name = "cbxTTS";
             this.cbxTTS.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -529,6 +531,21 @@ namespace ThermalCameraNet
             this.btnPlay.TabIndex = 60;
             this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
             // 
+            // cbxSaveImage
+            // 
+            this.cbxSaveImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbxSaveImage.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cbxSaveImage.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.cbxSaveImage.ForeColor = System.Drawing.Color.White;
+            this.cbxSaveImage.Location = new System.Drawing.Point(680, 643);
+            this.cbxSaveImage.MinimumSize = new System.Drawing.Size(1, 1);
+            this.cbxSaveImage.Name = "cbxSaveImage";
+            this.cbxSaveImage.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
+            this.cbxSaveImage.Size = new System.Drawing.Size(223, 29);
+            this.cbxSaveImage.Style = Sunny.UI.UIStyle.Custom;
+            this.cbxSaveImage.TabIndex = 61;
+            this.cbxSaveImage.Text = "Save Image";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 27F);
@@ -536,6 +553,7 @@ namespace ThermalCameraNet
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
             this.ClientSize = new System.Drawing.Size(917, 720);
             this.ControlBoxFillHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.Controls.Add(this.cbxSaveImage);
             this.Controls.Add(this.btnPlay);
             this.Controls.Add(this.btnReload);
             this.Controls.Add(this.Video_seek);
@@ -609,6 +627,7 @@ namespace ThermalCameraNet
         private UITrackBar Video_seek;
         private UISymbolButton btnReload;
         private UISymbolButton btnPlay;
+        private UICheckBox cbxSaveImage;
     }
 }
 
