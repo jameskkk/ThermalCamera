@@ -164,41 +164,7 @@ namespace ThermalCameraNet
                 //Mat gray = new Mat(new Size(180, 160), DepthType.Cv8U, 1);
                 //LogUnit.Log.Info("Gray Size = " + gray.GetRawData().Length);
                 //gray.SetTo(byteBuffer);
-                int index = 0;
-                byte[,] byteBuffer2D = new byte[180, 160];
-                for (int x = 0; x < 180; x++)
-                {
-                    for (int y = 0; y < 160; y++)
-                    {
-                        byteBuffer2D[x, y] = byteBuffer[index];
-                        index++;
-                    }
-                }
-                int tempValue = byteBuffer2D[120, 0] * 256 + byteBuffer2D[120, 1];
-                int sensorOffset = byteBuffer2D[120, 2] * 256 + byteBuffer2D[120, 3];
-                int tempRatio = byteBuffer2D[120, 4];
-                LogUnit.Log.Info("tempValue = " + tempValue.ToString());
-                LogUnit.Log.Info("sensorOffset = " + sensorOffset.ToString());
-                LogUnit.Log.Info("tempRatio = " + tempRatio.ToString());
-
-                if (sensorOffset > 32767)
-                    sensorOffset -= 65536;
-
-                index = 0;
-                byte[] rawImg = new byte[120 * 160];
-                for (int x = 0; x < 120; x++)
-                {
-                    for (int y = 0; y < 160; y++)
-                    {
-                        rawImg[index] = byteBuffer2D[x, y];
-                        index++;
-                    }
-                }
-                Image<Gray, byte> image = new Image<Gray, byte>(160, 120);
-                image.Bytes = rawImg;
-
-                //ParseThermalData(gray);
-                ImageUnit.BindBitmapToPicture(picPreview, image.ToUMat().ToBitmap());
+                ParseThermalData(byteBuffer, true);
             }
             catch (Exception ex)
             {
@@ -376,7 +342,12 @@ namespace ThermalCameraNet
             Marshal.Copy(target, 0, mat.DataPointer + (row * mat.Cols + col) * mat.ElementSize, 1);
         }
 
-        public float ParseThermalData(byte[] byteBuffer)
+        /// <summary>
+        /// Parse GTC Camera Info
+        /// </summary>
+        /// <param name="byteBuffer"></param>
+        /// <returns></returns>
+        public float ParseThermalData(byte[] byteBuffer, bool isSaveTemperature)
         {
             // The UVC imcoming data is (1*28800)
             // Should be reshape to (180*160)
@@ -410,7 +381,35 @@ namespace ThermalCameraNet
                     index++;
                 }
             }
-            Image<Gray, byte> image = new Image<Gray, byte>(160, 120);
+
+            if (isSaveTemperature)
+            {
+                // Get tempImg value
+                int[,] tempImg = new int[160, 120];
+                for (int x = 0; x < 160; x++)
+                {
+                    for (int y = 0; y < 120; y++)
+                    {
+                        tempImg[x, y] = ((byteBuffer2D[y, x] - sensorOffset) / tempRatio) + (tempValue / 100);
+                    }
+                }
+
+                using (StreamWriter file = new StreamWriter("tempImg.csv"))
+                {
+                    for (int x = 0; x < 160; x++)
+                    {
+                        for (int y = 0; y < 120; y++)
+                        {
+                            file.Write(tempImg[x, y].ToString("0.00"));
+                            file.Write(",");
+                        }
+                        file.Write("\n");
+                    }
+                    file.Close();
+                }
+            }
+           
+            Image <Gray, byte> image = new Image<Gray, byte>(160, 120);
             image.Bytes = rawImg;
             UMat gray = image.ToUMat();
             Mat hotmap = new Mat();
@@ -480,7 +479,7 @@ namespace ThermalCameraNet
                     {
                         if (m_GTCCamera && cbxGTCFormat.Checked)
                         {
-                            tempurature = ParseThermalData(gray.GetRawData());
+                            tempurature = ParseThermalData(gray.GetRawData(), false);
                         }
                         else
                         {

@@ -587,7 +587,6 @@ namespace ThermalCameraNet
             this.btnLoadBin.Style = Sunny.UI.UIStyle.Custom;
             this.btnLoadBin.TabIndex = 63;
             this.btnLoadBin.Text = "Bin";
-            this.btnLoadBin.Visible = false;
             this.btnLoadBin.Click += new System.EventHandler(this.btnLoadBin_Click);
             // 
             // FormMain
