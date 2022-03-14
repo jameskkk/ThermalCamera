@@ -70,5 +70,17 @@ namespace ThermalCameraNet.Properties {
                 return ((int)(this["LineDuration"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int CameraMode {
+            get {
+                return ((int)(this["CameraMode"]));
+            }
+            set {
+                this["CameraMode"] = value;
+            }
+        }
     }
 }

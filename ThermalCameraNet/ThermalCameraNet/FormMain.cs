@@ -22,14 +22,12 @@ namespace ThermalCameraNet
 {
     public partial class FormMain : UIForm
     {
+        #region Properties
+
         private const int VIDEO_WIDTH = 640;
         private const int VIDEO_HEIGHT = 480;
         private const int GTC_VIDEO_WIDTH = 160;
         private const int GTC_VIDEO_HEIGHT = 120;
-        private const string FACE_HAAR_XML_PATH = "haarcascade_frontalface_default.xml";
-        //private const string FACE_HAAR_XML_PATH = "haarcascade_frontalface_alt_tree.xml";
-        //private const string EYE_HAAR_XML_PATH = "haarcascade_frontalface_default.xml";
-        private const string EYE_HAAR_XML_PATH = "haarcascade_eye_tree_eyeglasses.xml";
 
         private VideoCapture m_CaptureVideo = null;
         private Stopwatch m_Stopwatch = null;
@@ -37,22 +35,15 @@ namespace ThermalCameraNet
         private double m_TotalFrames = 0; // Total frame of video
         private double m_FrameRate = 0; // Capture frame Rate
         private List<CameraDevice> m_LstCamera = null;
-        private CascadeClassifier m_FaceCascadeClassifier = null;
-        private CascadeClassifier m_EyeCascadeClassifier = null;
-        private Pen m_PenFace = new Pen(Color.Red, 3.0f);
-        private Pen m_PenEye = new Pen(Color.Green, 3.0f);
         private Brush m_BrushTemperature = new SolidBrush(Color.Blue);
         private Font m_FontTemperature = new Font("Arial", 12, FontStyle.Bold, GraphicsUnit.Pixel);
         private Font m_FontGTCTemperature = new Font("Arial", 8, FontStyle.Regular, GraphicsUnit.Pixel);
-        private Size m_FaceMinSize = new Size(20, 20);
-        //private Size m_FaceMaxSize = new Size(300, 300);
-        private Size m_eyeMinSize = new Size(10, 10);
         private bool m_IsVideo = false;
         private bool m_IsPlay = false;
         private TTSUnit m_TTSUnit = new TTSUnit();
         private bool m_GTCCamera = false;
         private Random m_Random = new Random();
-
+        private FaceUnit m_FaceUnit = null;
 
         public class CameraDevice
         {
@@ -62,6 +53,8 @@ namespace ThermalCameraNet
             public string Description;
         }
 
+        #endregion
+
         public FormMain()
         {
             InitializeComponent();
@@ -70,14 +63,13 @@ namespace ThermalCameraNet
         private void FormMain_Load(object sender, EventArgs e)
         {
             btnRefresh_Click(sender, e);
-            cbxCameraMode.SelectedIndex = 1; // DShow
+            cbxCameraMode.SelectedIndex = Properties.Settings.Default.CameraMode; // DShow
             m_TTSUnit.InitSpeech();
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            btnCloseCamera_Click(sender, e);
-            
+            btnCloseCamera_Click(sender, e); 
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
@@ -98,7 +90,8 @@ namespace ThermalCameraNet
                     MessageBox.Show("Cannot open camera!");
                     return;
                 }
-
+                Properties.Settings.Default.CameraMode = cbxCameraMode.SelectedIndex;
+                Properties.Settings.Default.Save();
                 InitVideoCapture(m_LstCamera[cbxCameraList.SelectedIndex].Caption);
             }
         }
@@ -114,11 +107,7 @@ namespace ThermalCameraNet
 #endif
                 m_CaptureVideo.Stop();
                 m_CaptureVideo.Dispose();
-                m_FaceCascadeClassifier.Dispose();
-                m_EyeCascadeClassifier.Dispose();
-                m_CaptureVideo = null;
-                m_FaceCascadeClassifier = null;
-                m_EyeCascadeClassifier = null;
+                m_CaptureVideo = null; 
                 LogUnit.Log.Info("btnCloseCamera_Click(): End...");
             }
         }
@@ -167,6 +156,55 @@ namespace ThermalCameraNet
             }
         }
 
+        private void btnLoadBin_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                byte[] byteBuffer = File.ReadAllBytes("GTCImage.bin");
+                //Mat gray = new Mat(new Size(180, 160), DepthType.Cv8U, 1);
+                //LogUnit.Log.Info("Gray Size = " + gray.GetRawData().Length);
+                //gray.SetTo(byteBuffer);
+                int index = 0;
+                byte[,] byteBuffer2D = new byte[180, 160];
+                for (int x = 0; x < 180; x++)
+                {
+                    for (int y = 0; y < 160; y++)
+                    {
+                        byteBuffer2D[x, y] = byteBuffer[index];
+                        index++;
+                    }
+                }
+                int tempValue = byteBuffer2D[120, 0] * 256 + byteBuffer2D[120, 1];
+                int sensorOffset = byteBuffer2D[120, 2] * 256 + byteBuffer2D[120, 3];
+                int tempRatio = byteBuffer2D[120, 4];
+                LogUnit.Log.Info("tempValue = " + tempValue.ToString());
+                LogUnit.Log.Info("sensorOffset = " + sensorOffset.ToString());
+                LogUnit.Log.Info("tempRatio = " + tempRatio.ToString());
+
+                if (sensorOffset > 32767)
+                    sensorOffset -= 65536;
+
+                index = 0;
+                byte[] rawImg = new byte[120 * 160];
+                for (int x = 0; x < 120; x++)
+                {
+                    for (int y = 0; y < 160; y++)
+                    {
+                        rawImg[index] = byteBuffer2D[x, y];
+                        index++;
+                    }
+                }
+                Image<Gray, byte> image = new Image<Gray, byte>(160, 120);
+                image.Bytes = rawImg;
+
+                //ParseThermalData(gray);
+                ImageUnit.BindBitmapToPicture(picPreview, image.ToUMat().ToBitmap());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
 
         private void btnReload_Click(object sender, EventArgs e)
         {
@@ -211,11 +249,6 @@ namespace ThermalCameraNet
         {
             if (m_IsVideo && m_CaptureVideo != null)
             {
-                //if (m_Stopwatch != null)
-                //{
-                //    m_Stopwatch.Restart();
-                //}
-
                 //LogUnit.Log.Info("Video_seek_Scroll() Video_seek.Value = " + Video_seek.Value);
                 m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.PosFrames, Video_seek.Value);
                 //ProcessCameraFrame(sender, e);
@@ -248,13 +281,14 @@ namespace ThermalCameraNet
                     cameraDevice.DeviceID =  device.GetPropertyValue("DeviceID").ToString();
                     cameraDevice.PNPDeviceID = device.GetPropertyValue("PNPDeviceID").ToString();
                     cameraDevice.Description = device.GetPropertyValue("Description").ToString();
-
+                    LogUnit.Log.Info("GetAllConnectedCameras(): Status     : " + device["Status"].ToString());
                     LogUnit.Log.Info("GetAllConnectedCameras(): Caption    : " + cameraDevice.Caption);
                     LogUnit.Log.Info("GetAllConnectedCameras(): DeviceID   : " + cameraDevice.DeviceID);
                     LogUnit.Log.Info("GetAllConnectedCameras(): PNPDeviceID: " + cameraDevice.PNPDeviceID);
                     LogUnit.Log.Info("GetAllConnectedCameras(): Description: " + cameraDevice.Description);
 
-                    cameraNames.Add(cameraDevice);
+                    if (device["Status"].ToString().Contains("OK"))
+                        cameraNames.Add(cameraDevice);
                 }
             }
 
@@ -264,15 +298,16 @@ namespace ThermalCameraNet
         private void InitVideoCapture(string CameraCaption)
         {
             Directory.SetCurrentDirectory(FileUnit.AssemblyDirectory);
-            string facehaarcascade = Path.Combine(FileUnit.AssemblyDirectory, FACE_HAAR_XML_PATH);
-            m_FaceCascadeClassifier = new CascadeClassifier(facehaarcascade);
-            string eyehaarcascade = Path.Combine(FileUnit.AssemblyDirectory, EYE_HAAR_XML_PATH);
-            m_EyeCascadeClassifier = new CascadeClassifier(eyehaarcascade);
+            if (m_FaceUnit == null)
+            {
+                m_FaceUnit = new FaceUnit();
+                m_FaceUnit.InitFaceDetect();
+            }
 
             if (CameraCaption.Contains("GTC"))
             {
                 m_GTCCamera = true;
-                m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.ConvertRgb, 1);
+                m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.ConvertRgb, cbxGTCFormat.Checked ? 0 : 1);
                 m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, GTC_VIDEO_HEIGHT);
                 m_CaptureVideo.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, GTC_VIDEO_WIDTH);
                 timerProcessFrame.Interval = 100;
@@ -291,7 +326,7 @@ namespace ThermalCameraNet
                 string codec = new string(Encoding.UTF8.GetString(BitConverter.GetBytes(Convert.ToUInt32(codec_double))).ToCharArray());
                 LogUnit.Log.Info("InitVideoCapture() Codec: " + codec + ", FrameRate: " + m_FrameRate.ToString());
             }
-           
+
 
             Video_seek.Value = 0;
             lblFPS.Text = m_FrameRate.ToString("0.0") + " fps";
@@ -341,23 +376,57 @@ namespace ThermalCameraNet
             Marshal.Copy(target, 0, mat.DataPointer + (row * mat.Cols + col) * mat.ElementSize, 1);
         }
 
-        public void ParseThermalData(Mat gray)
+        public float ParseThermalData(byte[] byteBuffer)
         {
             // The UVC imcoming data is (1*28800)
             // Should be reshape to (180*160)
-            //gray = frame.Reshape(0, 180 * 160);
-            //double arrOut = new double [180][160];
-            double tempValue = GetDoubleValue(gray, 0, 120) * 256 + GetDoubleValue(gray, 1, 120);
-            double sensorOffset = GetDoubleValue(gray, 2, 120) * 256 + GetDoubleValue(gray, 3, 120);
-            double tempRatio = GetDoubleValue(gray, 4, 120);
-            LogUnit.Log.Info("Temperature: " + tempValue.ToString("0.0"));
-            LogUnit.Log.Info("Temperature Ratio: " + tempRatio.ToString("0.0"));
+            int index = 0;
+            byte[,] byteBuffer2D = new byte[180, 160];
+            for (int x = 0; x < 180; x++)
+            {
+                for (int y = 0; y < 160; y++)
+                {
+                    byteBuffer2D[x, y] = byteBuffer[index];
+                    index++;
+                }
+            }
+            int tempValue = byteBuffer2D[120, 0] * 256 + byteBuffer2D[120, 1];
+            int sensorOffset = byteBuffer2D[120, 2] * 256 + byteBuffer2D[120, 3];
+            int tempRatio = byteBuffer2D[120, 4];
+            LogUnit.Log.Info("tempValue = " + tempValue.ToString());
+            LogUnit.Log.Info("sensorOffset = " + sensorOffset.ToString());
+            LogUnit.Log.Info("tempRatio = " + tempRatio.ToString());
 
-            // Turn unsigned int 16 sensorOffset to signed int 16
             if (sensorOffset > 32767)
                 sensorOffset -= 65536;
-            LogUnit.Log.Info("Sensor Offset: " + sensorOffset.ToString("0.0"));
-            //gray = gray[:120][:]
+
+            index = 0;
+            byte[] rawImg = new byte[120 * 160];
+            for (int x = 0; x < 120; x++)
+            {
+                for (int y = 0; y < 160; y++)
+                {
+                    rawImg[index] = byteBuffer2D[x, y];
+                    index++;
+                }
+            }
+            Image<Gray, byte> image = new Image<Gray, byte>(160, 120);
+            image.Bytes = rawImg;
+            UMat gray = image.ToUMat();
+            Mat hotmap = new Mat();
+
+            if (cbxHotmap.Checked)
+            {
+                //LogUnit.Log.Info("ProcessCameraFrame(): ApplyColorMap() Start...");
+                CvInvoke.ApplyColorMap(gray, hotmap, ColorMapType.Jet);
+                ImageUnit.BindBitmapToPicture(picPreview, hotmap.ToBitmap());
+            }
+            else
+            {
+                ImageUnit.BindBitmapToPicture(picPreview, gray.ToBitmap());
+            }
+            
+            return tempValue / 100.0f;
         }
 
         public double NextDouble(Random random, double minValue, double maxValue)
@@ -372,8 +441,9 @@ namespace ThermalCameraNet
                 return;
 
             double framesNo = 0;
+            double tempurature = NextDouble(m_Random, 36.0, 37.4);
             if (!m_GTCCamera)
-                framesNo = m_CaptureVideo.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.PosFrames);
+                framesNo = m_CaptureVideo.GetCaptureProperty(CapProp.PosFrames);
             Mat frame = m_CaptureVideo.QueryFrame();
             if (frame != null)
             {
@@ -385,16 +455,22 @@ namespace ThermalCameraNet
                     if (m_GTCCamera)
                     {
                         gray = frame.Clone();
-                        if (cbxSaveImage.Checked)
-                            gray.Save("Face.png");
-                        //gray = frame.Reshape(0, 180 * 160);
-                        //ParseThermalData(gray);
+                        if (cbxGTCFormat.Checked && cbxSaveImage.Checked)
+                        {
+                            //gray.Save("GTCImage.png");
+                            using (FileStream fs = new FileStream("GTCImage.bin", FileMode.OpenOrCreate))
+                            {
+                                BinaryWriter bs = new BinaryWriter(fs);
+                                bs.Write(gray.GetRawData());
+                                LogUnit.Log.Info("Save GTCImage.bin.");
+                            }
+                        }
                     }
                     else
                         CvInvoke.CvtColor(frame, gray, ColorConversion.Bgr2Gray);
 
                     //LogUnit.Log.Info("ProcessCameraFrame(): BindBitmapToPicture() Start...");
-                    if (cbxHotmap.Checked)
+                    if (!m_GTCCamera && cbxHotmap.Checked)
                     {
                         //LogUnit.Log.Info("ProcessCameraFrame(): ApplyColorMap() Start...");
                         CvInvoke.ApplyColorMap(gray, hotmap, ColorMapType.Jet);
@@ -402,94 +478,57 @@ namespace ThermalCameraNet
                     }   
                     else
                     {
-                        //Image<Gray, byte> image = gray.ToImage<Gray, byte>();
-                        //Image<Bgr, byte> image = frame.ToImage<Bgr, byte>();
-                        ImageUnit.BindBitmapToPicture(picPreview, frame.ToBitmap());
-                    }
-
-                    if (cbxFaceDetect.Checked)
-                    {
-                        Graphics graphics = Graphics.FromImage(picPreview.Image);
-                        if (m_GTCCamera)
+                        if (m_GTCCamera && cbxGTCFormat.Checked)
                         {
-                            if (cbxShowTemperature.Checked)
-                            {
-                                double tempurature = NextDouble(m_Random, 36.0, 37.4);
-                                DrawTemperature(graphics, tempurature.ToString("0.0") + "°C", 5, 5);
-                            }
+                            tempurature = ParseThermalData(gray.GetRawData());
                         }
                         else
                         {
-                            //LogUnit.Log.Info("ProcessCameraFrame(): DetectMultiScale() Start...");
-                            //Image<Gray, byte> imageGray = gray.ToImage<Gray, byte>();
-                            //imageGray._EqualizeHist(); // EqualizeHist
-                            CvInvoke.EqualizeHist(gray, gray);
-                            Rectangle[] faceRectArray = m_FaceCascadeClassifier.DetectMultiScale(gray, // gray Scale Image
-                                1.1, // scaleFactor 1.1~1.5, 越大耗時越低, 檢測精度越低
-                                3,   // minNeighbors 3~15, 越高耗時越低
-                                m_FaceMinSize,  // 最小臉部大小 
-                                Size.Empty/*m_FaceMaxSize*/); // 最大臉部大小, 越大耗時越低
-                            foreach (Rectangle rectFace in faceRectArray)
+                            ImageUnit.BindBitmapToPicture(picPreview, frame.ToBitmap());
+                        }
+                    }
+
+                    if (m_GTCCamera && cbxShowTemperature.Checked)
+                    {
+                        Graphics graphics = Graphics.FromImage(picPreview.Image);
+                        DrawTemperature(graphics, tempurature.ToString("0.0") + "°C", 5, 5);
+                    }
+                    else if (!m_GTCCamera && cbxFaceDetect.Checked)
+                    {
+                        Graphics graphics = Graphics.FromImage(picPreview.Image);
+                        Rectangle rectFace = new Rectangle(0, 0, 0, 0);
+                        bool isFaceDetect = m_FaceUnit.DetectFaceAndEye(gray, graphics, cbxEyeDetect.Checked, ref rectFace);
+
+                        if (cbxShowTemperature.Checked && isFaceDetect)
+                        {
+                            DrawTemperature(graphics, tempurature.ToString("0.0") + "°C", rectFace.X + 10, rectFace.Y + 10);
+
+                            float lastSendTime = Properties.Settings.Default.LineDuration + 1;
+                            if (m_LineStopwatch != null)
+                                lastSendTime = (float)m_LineStopwatch.ElapsedMilliseconds / 1000;
+                            else
                             {
-                                // This will focus in on the face from the haar results its not perfect but it will remove a majoriy of the background noise
-                                //Rectangle facesDetectedRect = rect;
-                                //facesDetectedRect.X += (int)(facesDetectedRect.Height * 0.6);
-                                //facesDetectedRect.Y += (int)(facesDetectedRect.Width * 0.8);
-                                //facesDetectedRect.Height += (int)(facesDetectedRect.Height * 0.1);
-                                //facesDetectedRect.Width += (int)(facesDetectedRect.Width * 0.2);
+                                m_LineStopwatch = new Stopwatch();
+                                m_LineStopwatch.Start();
+                            }
 
-                                //Image<Bgr, byte> imageBgr = frame.ToImage<Bgr, byte>();
-                                //imageBgr.Draw(facesDetectedRect, new Bgr(Color.Red), 3);// Draw Rectangle
-
-                                graphics.DrawRectangle(m_PenFace, rectFace);
-                                if (cbxEyeDetect.Checked)
+                            if (tempurature > 37.5 && lastSendTime > Properties.Settings.Default.LineDuration)
+                            {
+                                LogUnit.Log.Info("ProcessCameraFrame(): alarm over temperature...");
+                                m_LineStopwatch.Restart();
+                                if (cbxLineNotify.Checked)
                                 {
-                                    Mat face = new Mat(gray, rectFace);
-                                    Rectangle[] eyeRectArray = m_EyeCascadeClassifier.DetectMultiScale(face, // gray Scale Image
-                                            1.1, // scaleFactor 1.1~1.5, 越大耗時越低, 檢測精度越低
-                                            3,   // minNeighbors 3~15, 越高耗時越低
-                                            m_eyeMinSize,  // 最小眼睛大小 
-                                            Size.Empty/*m_FaceMaxSize*/); // 最大眼睛大小, 越大耗時越低
-                                    foreach (Rectangle rectEye in eyeRectArray)
-                                    {
-                                        rectEye.Offset(rectFace.X, rectFace.Y);
-                                        graphics.DrawRectangle(m_PenEye, rectEye);
-                                    }
-                                    face.Dispose();
+                                    Image alarmImage = picPreview.Image;
+                                    LineUnit.PushLineNotify(alarmImage);
                                 }
 
-                                if (cbxShowTemperature.Checked)
+                                if (cbxTTS.Checked)
                                 {
-                                    float tempurature = 37.8f;
-                                    DrawTemperature(graphics, tempurature.ToString("0.0") + "°C", rectFace.X + 10, rectFace.Y + 10);
-
-                                    float lastSendTime = Properties.Settings.Default.LineDuration + 1;
-                                    if (m_LineStopwatch != null)
-                                        lastSendTime = (float)m_LineStopwatch.ElapsedMilliseconds / 1000;
-                                    else
-                                    {
-                                        m_LineStopwatch = new Stopwatch();
-                                        m_LineStopwatch.Start();
-                                    }
-
-                                    if (tempurature > 37.5 && lastSendTime > Properties.Settings.Default.LineDuration)
-                                    {
-                                        LogUnit.Log.Info("ProcessCameraFrame(): alarm over temperature...");
-                                        m_LineStopwatch.Restart();
-                                        if (cbxLineNotify.Checked)
-                                        {
-                                            Image alarmImage = picPreview.Image;
-                                            LineUnit.PushLineNotify(alarmImage);
-                                        }
-
-                                        if (cbxTTS.Checked)
-                                        {
-                                            m_TTSUnit.SpeechAsync();
-                                        }
-                                    }
+                                    m_TTSUnit.SpeechAsync();
                                 }
                             }
-                        }         
+                        }
+
                     }
 
                     if (m_IsVideo && !m_GTCCamera)
@@ -585,6 +624,9 @@ namespace ThermalCameraNet
             if (cbxCameraList.SelectedIndex != -1 && m_LstCamera[cbxCameraList.SelectedIndex].Caption.Contains("GTC"))
             {
                 cbxCameraMode.SelectedIndex = 0;
+                cbxFaceDetect.Checked = false;
+                cbxEyeDetect.Checked = false;
+                cbxGTCFormat.Checked = true;
             }
         }
     }

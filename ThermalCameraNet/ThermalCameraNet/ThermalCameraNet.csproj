@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DetectFace.cs" />
+    <Compile Include="FaceUnit.cs" />
     <Compile Include="FileUnit.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>

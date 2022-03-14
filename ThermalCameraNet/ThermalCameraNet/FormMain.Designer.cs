@@ -62,6 +62,8 @@ namespace ThermalCameraNet
             this.btnReload = new Sunny.UI.UISymbolButton();
             this.btnPlay = new Sunny.UI.UISymbolButton();
             this.cbxSaveImage = new Sunny.UI.UICheckBox();
+            this.cbxGTCFormat = new Sunny.UI.UICheckBox();
+            this.btnLoadBin = new Sunny.UI.UIButton();
             ((System.ComponentModel.ISupportInitialize)(this.picHotmap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).BeginInit();
             this.SuspendLayout();
@@ -79,7 +81,7 @@ namespace ThermalCameraNet
             this.btnOpenCamera.ForeHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnOpenCamera.ForePressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnOpenCamera.ForeSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
-            this.btnOpenCamera.Location = new System.Drawing.Point(680, 50);
+            this.btnOpenCamera.Location = new System.Drawing.Point(680, 45);
             this.btnOpenCamera.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnOpenCamera.Name = "btnOpenCamera";
             this.btnOpenCamera.RectColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
@@ -156,7 +158,7 @@ namespace ThermalCameraNet
             this.btnCloseCamera.ForeHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCloseCamera.ForePressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCloseCamera.ForeSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
-            this.btnCloseCamera.Location = new System.Drawing.Point(680, 120);
+            this.btnCloseCamera.Location = new System.Drawing.Point(680, 110);
             this.btnCloseCamera.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnCloseCamera.Name = "btnCloseCamera";
             this.btnCloseCamera.RectColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
@@ -195,7 +197,7 @@ namespace ThermalCameraNet
             this.btnCameraSettings.ForeHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCameraSettings.ForePressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnCameraSettings.ForeSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
-            this.btnCameraSettings.Location = new System.Drawing.Point(680, 190);
+            this.btnCameraSettings.Location = new System.Drawing.Point(680, 175);
             this.btnCameraSettings.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnCameraSettings.Name = "btnCameraSettings";
             this.btnCameraSettings.RectColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
@@ -233,7 +235,7 @@ namespace ThermalCameraNet
             "DShow",
             "FFmepg",
             "V4L2"});
-            this.cbxCameraMode.Location = new System.Drawing.Point(680, 384);
+            this.cbxCameraMode.Location = new System.Drawing.Point(680, 346);
             this.cbxCameraMode.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cbxCameraMode.MinimumSize = new System.Drawing.Size(63, 0);
             this.cbxCameraMode.Name = "cbxCameraMode";
@@ -248,7 +250,7 @@ namespace ThermalCameraNet
             this.uiLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.uiLabel2.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.uiLabel2.ForeColor = System.Drawing.Color.White;
-            this.uiLabel2.Location = new System.Drawing.Point(680, 342);
+            this.uiLabel2.Location = new System.Drawing.Point(680, 304);
             this.uiLabel2.Name = "uiLabel2";
             this.uiLabel2.Size = new System.Drawing.Size(174, 23);
             this.uiLabel2.Style = Sunny.UI.UIStyle.Custom;
@@ -303,7 +305,7 @@ namespace ThermalCameraNet
             this.cbxFaceDetect.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxFaceDetect.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxFaceDetect.ForeColor = System.Drawing.Color.White;
-            this.cbxFaceDetect.Location = new System.Drawing.Point(680, 427);
+            this.cbxFaceDetect.Location = new System.Drawing.Point(680, 386);
             this.cbxFaceDetect.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxFaceDetect.Name = "cbxFaceDetect";
             this.cbxFaceDetect.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -319,7 +321,7 @@ namespace ThermalCameraNet
             this.cbxHotmap.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxHotmap.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxHotmap.ForeColor = System.Drawing.Color.White;
-            this.cbxHotmap.Location = new System.Drawing.Point(680, 499);
+            this.cbxHotmap.Location = new System.Drawing.Point(680, 456);
             this.cbxHotmap.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxHotmap.Name = "cbxHotmap";
             this.cbxHotmap.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -341,7 +343,7 @@ namespace ThermalCameraNet
             this.btnOpenVideo.ForeHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnOpenVideo.ForePressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
             this.btnOpenVideo.ForeSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
-            this.btnOpenVideo.Location = new System.Drawing.Point(680, 260);
+            this.btnOpenVideo.Location = new System.Drawing.Point(680, 240);
             this.btnOpenVideo.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnOpenVideo.Name = "btnOpenVideo";
             this.btnOpenVideo.RectColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
@@ -433,7 +435,7 @@ namespace ThermalCameraNet
             this.cbxShowTemperature.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxShowTemperature.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxShowTemperature.ForeColor = System.Drawing.Color.White;
-            this.cbxShowTemperature.Location = new System.Drawing.Point(680, 535);
+            this.cbxShowTemperature.Location = new System.Drawing.Point(680, 491);
             this.cbxShowTemperature.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxShowTemperature.Name = "cbxShowTemperature";
             this.cbxShowTemperature.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -449,7 +451,7 @@ namespace ThermalCameraNet
             this.cbxEyeDetect.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxEyeDetect.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxEyeDetect.ForeColor = System.Drawing.Color.White;
-            this.cbxEyeDetect.Location = new System.Drawing.Point(680, 463);
+            this.cbxEyeDetect.Location = new System.Drawing.Point(680, 421);
             this.cbxEyeDetect.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxEyeDetect.Name = "cbxEyeDetect";
             this.cbxEyeDetect.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -464,7 +466,7 @@ namespace ThermalCameraNet
             this.cbxLineNotify.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxLineNotify.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxLineNotify.ForeColor = System.Drawing.Color.White;
-            this.cbxLineNotify.Location = new System.Drawing.Point(680, 571);
+            this.cbxLineNotify.Location = new System.Drawing.Point(680, 526);
             this.cbxLineNotify.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxLineNotify.Name = "cbxLineNotify";
             this.cbxLineNotify.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -479,7 +481,7 @@ namespace ThermalCameraNet
             this.cbxTTS.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxTTS.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxTTS.ForeColor = System.Drawing.Color.White;
-            this.cbxTTS.Location = new System.Drawing.Point(680, 607);
+            this.cbxTTS.Location = new System.Drawing.Point(680, 561);
             this.cbxTTS.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxTTS.Name = "cbxTTS";
             this.cbxTTS.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -537,7 +539,7 @@ namespace ThermalCameraNet
             this.cbxSaveImage.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cbxSaveImage.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
             this.cbxSaveImage.ForeColor = System.Drawing.Color.White;
-            this.cbxSaveImage.Location = new System.Drawing.Point(680, 643);
+            this.cbxSaveImage.Location = new System.Drawing.Point(680, 596);
             this.cbxSaveImage.MinimumSize = new System.Drawing.Size(1, 1);
             this.cbxSaveImage.Name = "cbxSaveImage";
             this.cbxSaveImage.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
@@ -546,6 +548,48 @@ namespace ThermalCameraNet
             this.cbxSaveImage.TabIndex = 61;
             this.cbxSaveImage.Text = "Save Image";
             // 
+            // cbxGTCFormat
+            // 
+            this.cbxGTCFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbxGTCFormat.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cbxGTCFormat.Font = new System.Drawing.Font("Microsoft YaHei", 12F);
+            this.cbxGTCFormat.ForeColor = System.Drawing.Color.White;
+            this.cbxGTCFormat.Location = new System.Drawing.Point(680, 631);
+            this.cbxGTCFormat.MinimumSize = new System.Drawing.Size(1, 1);
+            this.cbxGTCFormat.Name = "cbxGTCFormat";
+            this.cbxGTCFormat.Padding = new System.Windows.Forms.Padding(22, 0, 0, 0);
+            this.cbxGTCFormat.Size = new System.Drawing.Size(223, 29);
+            this.cbxGTCFormat.Style = Sunny.UI.UIStyle.Custom;
+            this.cbxGTCFormat.TabIndex = 62;
+            this.cbxGTCFormat.Text = "GTC Format";
+            // 
+            // btnLoadBin
+            // 
+            this.btnLoadBin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLoadBin.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnLoadBin.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(40)))), ((int)(((byte)(70)))));
+            this.btnLoadBin.FillColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(40)))), ((int)(((byte)(70)))));
+            this.btnLoadBin.FillHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.btnLoadBin.FillPressColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            this.btnLoadBin.FillSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            this.btnLoadBin.Font = new System.Drawing.Font("Microsoft YaHei", 11F, System.Drawing.FontStyle.Bold);
+            this.btnLoadBin.ForeHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnLoadBin.ForePressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnLoadBin.ForeSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnLoadBin.Location = new System.Drawing.Point(839, 554);
+            this.btnLoadBin.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnLoadBin.Name = "btnLoadBin";
+            this.btnLoadBin.RectColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnLoadBin.RectHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnLoadBin.RectPressColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnLoadBin.RectSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(130)))), ((int)(((byte)(130)))));
+            this.btnLoadBin.Size = new System.Drawing.Size(64, 36);
+            this.btnLoadBin.Style = Sunny.UI.UIStyle.Custom;
+            this.btnLoadBin.TabIndex = 63;
+            this.btnLoadBin.Text = "Bin";
+            this.btnLoadBin.Visible = false;
+            this.btnLoadBin.Click += new System.EventHandler(this.btnLoadBin_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 27F);
@@ -553,6 +597,8 @@ namespace ThermalCameraNet
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
             this.ClientSize = new System.Drawing.Size(917, 720);
             this.ControlBoxFillHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(233)))), ((int)(((byte)(255)))));
+            this.Controls.Add(this.btnLoadBin);
+            this.Controls.Add(this.cbxGTCFormat);
             this.Controls.Add(this.cbxSaveImage);
             this.Controls.Add(this.btnPlay);
             this.Controls.Add(this.btnReload);
@@ -628,6 +674,8 @@ namespace ThermalCameraNet
         private UISymbolButton btnReload;
         private UISymbolButton btnPlay;
         private UICheckBox cbxSaveImage;
+        private UICheckBox cbxGTCFormat;
+        private UIButton btnLoadBin;
     }
 }
 
