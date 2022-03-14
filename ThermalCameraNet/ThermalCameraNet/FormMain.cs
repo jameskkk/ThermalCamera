@@ -409,22 +409,37 @@ namespace ThermalCameraNet
                 }
             }
            
-            Image <Gray, byte> image = new Image<Gray, byte>(160, 120);
-            image.Bytes = rawImg;
-            UMat gray = image.ToUMat();
-            Mat hotmap = new Mat();
+            //Image <Gray, byte> image = new Image<Gray, byte>(160, 120);
+            //image.Bytes = rawImg;
+            //UMat gray = image.ToUMat();
+            Mat gray = new Mat(120, 160, DepthType.Cv8U, 1);
+            try
+            {
+                gray.SetTo<byte>(rawImg);
+                Mat hotmap = new Mat();
 
-            if (cbxHotmap.Checked)
-            {
-                //LogUnit.Log.Info("ProcessCameraFrame(): ApplyColorMap() Start...");
-                CvInvoke.ApplyColorMap(gray, hotmap, ColorMapType.Jet);
-                ImageUnit.BindBitmapToPicture(picPreview, hotmap.ToBitmap());
+                if (cbxHotmap.Checked)
+                {
+                    //LogUnit.Log.Info("ProcessCameraFrame(): ApplyColorMap() Start...");
+                    CvInvoke.ApplyColorMap(gray, hotmap, ColorMapType.Jet);
+                    ImageUnit.BindBitmapToPicture(picPreview, hotmap.ToBitmap());
+                }
+                else
+                {
+                    ImageUnit.BindBitmapToPicture(picPreview, gray.ToBitmap());
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ImageUnit.BindBitmapToPicture(picPreview, gray.ToBitmap());
+                int line = LogUnit.GetExceptionLineNumber(ex);
+                LogUnit.Log.Error("ParseThermalData() Exception: line: " + line.ToString() + ", " + ex.Message);
             }
-            
+            finally
+            {
+                if (gray != null)
+                    gray.Dispose();
+            }
+
             return tempValue / 100.0f;
         }
 
