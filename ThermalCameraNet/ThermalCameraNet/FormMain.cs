@@ -7,10 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Management;
 using Sunny.UI;
 using Emgu.CV;
-using Emgu.CV.Structure;
 using Emgu.CV.CvEnum;
 using System.IO;
 using System.Runtime.ExceptionServices;
@@ -45,14 +43,6 @@ namespace ThermalCameraNet
         private Random m_Random = new Random();
         private FaceUnit m_FaceUnit = null;
 
-        public class CameraDevice
-        {
-            public string Caption;
-            public string DeviceID;
-            public string PNPDeviceID;
-            public string Description;
-        }
-
         #endregion
 
         public FormMain()
@@ -83,7 +73,8 @@ namespace ThermalCameraNet
             if (cbxCameraList.SelectedIndex != -1)
             {
                 m_IsVideo = false;
-                m_CaptureVideo = new VideoCapture(cbxCameraList.SelectedIndex, GetCameraDriver());
+                int camID = CameraUnit.GetCameraIndexForPartName(cbxCameraList.SelectedText);
+                m_CaptureVideo = new VideoCapture(camID, GetCameraDriver());
 
                 if (!m_CaptureVideo.IsOpened)
                 {
@@ -115,7 +106,7 @@ namespace ThermalCameraNet
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             cbxCameraList.Items.Clear();
-            m_LstCamera = GetAllConnectedCameras();
+            m_LstCamera = CameraUnit.GetAllConnectedCameras();
             foreach (CameraDevice cameraDevice in m_LstCamera)
             {
                 cbxCameraList.Items.Add(cameraDevice.Caption);
@@ -233,32 +224,6 @@ namespace ThermalCameraNet
                 int line = LogUnit.GetExceptionLineNumber(ex);
                 LogUnit.Log.Error("ProcessCameraFrame() Exception: line: " + line.ToString() + ", " + ex.Message);
             }
-        }
-
-        private List<CameraDevice> GetAllConnectedCameras()
-        {
-            var cameraNames = new List<CameraDevice>();
-            using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE (PNPClass = 'Image' OR PNPClass = 'Camera')"))
-            {
-                foreach (var device in searcher.Get())
-                {
-                    CameraDevice cameraDevice = new CameraDevice();
-                    cameraDevice.Caption = device["Caption"].ToString();
-                    cameraDevice.DeviceID =  device.GetPropertyValue("DeviceID").ToString();
-                    cameraDevice.PNPDeviceID = device.GetPropertyValue("PNPDeviceID").ToString();
-                    cameraDevice.Description = device.GetPropertyValue("Description").ToString();
-                    LogUnit.Log.Info("GetAllConnectedCameras(): Status     : " + device["Status"].ToString());
-                    LogUnit.Log.Info("GetAllConnectedCameras(): Caption    : " + cameraDevice.Caption);
-                    LogUnit.Log.Info("GetAllConnectedCameras(): DeviceID   : " + cameraDevice.DeviceID);
-                    LogUnit.Log.Info("GetAllConnectedCameras(): PNPDeviceID: " + cameraDevice.PNPDeviceID);
-                    LogUnit.Log.Info("GetAllConnectedCameras(): Description: " + cameraDevice.Description);
-
-                    if (device["Status"].ToString().Contains("OK"))
-                        cameraNames.Add(cameraDevice);
-                }
-            }
-
-            return cameraNames;
         }
 
         private void InitVideoCapture(string CameraCaption)
